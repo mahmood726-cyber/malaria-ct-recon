@@ -56,3 +56,10 @@ def test_aggregate_writes_master_table(tmp_path: Path) -> None:
     schema.write(rs, tmp_path / "signal-table.csv")
     rows = list(csv.DictReader((tmp_path / "signal-table.csv").open(encoding="utf-8")))
     assert [r["pilot_id"] for r in rows] == ["P01", "P02"]
+
+
+def test_infinity_magnitude_serialises_to_empty_string(tmp_path: Path) -> None:
+    r = make_result(magnitude_value=float("inf"))
+    schema.write([r], tmp_path / "out.csv")
+    rows = list(csv.DictReader((tmp_path / "out.csv").open(encoding="utf-8")))
+    assert rows[0]["magnitude_value"] == ""

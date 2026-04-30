@@ -45,8 +45,15 @@ class PilotResult:
 
 
 def _format_value(v: object) -> str:
+    """Format a PilotResult field value for CSV serialization.
+
+    - float NaN or +/-inf -> empty string (serialised as missing)
+    - other floats: repr() if fractional, f"{v:.1f}" if integer-valued
+    - dict: JSON with sort_keys=True (reproducible)
+    - else: str(v)
+    """
     if isinstance(v, float):
-        if math.isnan(v):
+        if math.isnan(v) or math.isinf(v):
             return ""
         return repr(v) if v != int(v) else f"{v:.1f}"
     if isinstance(v, dict):
@@ -55,9 +62,13 @@ def _format_value(v: object) -> str:
 
 
 def write(results: Iterable[PilotResult], out_path: Path | str) -> None:
-    """Write PilotResult rows to CSV (overwrites)."""
+    """Write PilotResult rows to CSV (overwrites).
+
+    CSV column order is the frozen PilotResult field order.
+    """
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
+    # CSV column order matches the frozen PilotResult field order.
     cols = [f.name for f in fields(PilotResult)]
     with out.open("w", encoding="utf-8", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=cols)
