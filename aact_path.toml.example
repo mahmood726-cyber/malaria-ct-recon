@@ -1,0 +1,6 @@
+# Copy this file to aact_path.toml and edit the path.
+# aact_path.toml is gitignored — never commit a local-machine path.
+
+[aact]
+snapshot_dir = "D:/AACT-storage/AACT/2026-04-12/"
+snapshot_label = "2026-04-12"
