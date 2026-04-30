@@ -20,7 +20,14 @@ def open(snapshot_dir: Path | str) -> duckdb.DuckDBPyConnection:
 
 
 def _snapshot_dir(con: duckdb.DuckDBPyConnection) -> Path:
-    row = con.execute("SELECT path FROM __snapshot_dir").fetchone()
+    """Return the snapshot dir registered on this connection.
+
+    Raises RuntimeError if the connection was not created via aact.open().
+    """
+    try:
+        row = con.execute("SELECT path FROM __snapshot_dir").fetchone()
+    except duckdb.CatalogException as exc:
+        raise RuntimeError("Connection not opened via aact.open()") from exc
     if row is None:
         raise RuntimeError("Connection not opened via aact.open()")
     return Path(row[0])

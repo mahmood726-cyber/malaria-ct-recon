@@ -35,3 +35,9 @@ def test_list_tables_returns_sorted_names(tmp_path: Path) -> None:
     (tmp_path / "alpha.txt").write_text("a|b\n1|2\n", encoding="utf-8")
     con = aact.open(tmp_path)
     assert aact.list_tables(con) == ["alpha", "zebra"]
+
+
+def test_table_on_bare_duckdb_connection_raises_runtime_error() -> None:
+    bare_con = duckdb.connect(":memory:")
+    with pytest.raises(RuntimeError, match="Connection not opened via aact.open"):
+        aact.list_tables(bare_con)
