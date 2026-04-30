@@ -47,6 +47,11 @@ def _load_overrides(path: Path) -> tuple[set[str], set[str]]:
                 exc.add(nct)
             elif action == "include":
                 inc.add(nct)
+            else:
+                raise ValueError(
+                    f"Unknown action {row['action']!r} for {nct} in overrides — "
+                    f"must be 'include' or 'exclude'"
+                )
     return inc, exc
 
 

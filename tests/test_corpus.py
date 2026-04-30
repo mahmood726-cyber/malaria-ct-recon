@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from malaria_ct_recon import aact, corpus
 
@@ -58,3 +59,14 @@ def test_records_inclusion_reason(tmp_path: Path):
     ov = tmp_path / "ov.csv"; ov.write_text("nct_id,action,reason,added_by,added_on\n", encoding="utf-8")
     result = corpus.build(aact.open(tmp_path), overrides_path=ov)
     assert result.reason["NCT01"]
+
+
+def test_load_overrides_unknown_action_raises(tmp_path: Path):
+    _seed(tmp_path)
+    ov = tmp_path / "ov.csv"
+    ov.write_text(
+        "nct_id,action,reason,added_by,added_on\nNCT01,badvalue,test,test,2026-04-30\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="badvalue|Unknown action"):
+        corpus.build(aact.open(tmp_path), overrides_path=ov)
