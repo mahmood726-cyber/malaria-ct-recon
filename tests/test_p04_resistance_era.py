@@ -15,6 +15,9 @@ def test_p04_runs_on_fake_aact(fake_aact: Path) -> None:
     assert result.magnitude_unit == "fraction_of_drug_country_cells"
     assert 0.0 <= result.magnitude_value <= 1.0
     assert result.magnitude_ci_low <= result.magnitude_value <= result.magnitude_ci_high
+    # After the schema change: n_trials_in_scope counts drug×country cells, not trials.
+    # In the fixture, very few cells exist (the corpus is small).
+    assert result.n_trials_in_scope <= 20
 
 
 def test_p04_drug_canonicalisation() -> None:

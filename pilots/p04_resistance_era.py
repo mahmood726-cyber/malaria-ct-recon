@@ -106,15 +106,19 @@ def run(
         magnitude = spanning / n_cells
         lo, hi = stats.wilson_ci(int(spanning), int(n_cells))
 
+    n_artemisinin_trials = int(merged["nct_id"].nunique())
     excluded = {
-        "non_artemisinin": int(len(corpus.included) - merged["nct_id"].nunique()),
+        "non_artemisinin_trials": int(len(corpus.included) - n_artemisinin_trials),
+        "artemisinin_trials_contributing_cells": n_artemisinin_trials,
     }
 
     return schema.PilotResult(
         pilot_id=PILOT_ID,
         pilot_title=PILOT_TITLE,
         pilot_type="magnitude",
-        n_trials_in_scope=int(merged["nct_id"].nunique()),
+        # Denominator is drug×country cells (matches magnitude_unit), NOT trials.
+        # Artemisinin trial count is recorded in n_trials_excluded_for_reason for audit.
+        n_trials_in_scope=int(n_cells),
         magnitude_value=float(magnitude),
         magnitude_unit="fraction_of_drug_country_cells",
         magnitude_ci_low=float(lo),
@@ -122,7 +126,8 @@ def run(
         tractability_AACT_only="full",
         follow_up_potential=5,
         n_trials_excluded_for_reason=excluded,
-        notes=f"{int(spanning)}/{n_cells} drug × country cells span the pre/post-K13 boundary",
+        notes=f"{int(spanning)}/{n_cells} drug-country cells span pre/post-K13 boundary "
+              f"(from {n_artemisinin_trials} artemisinin trials)",
         script_path=SCRIPT_PATH,
         script_sha256=_sha256_self(),
         aact_snapshot=aact_snapshot,
