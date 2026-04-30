@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Malaria CT.gov Reconnaissance &mdash; Signal Table</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body { font-family: -apple-system, system-ui, Segoe UI, sans-serif; max-width: 1100px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
+  h1 { margin-bottom: 0.2rem; }
+  .meta { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #ddd; vertical-align: top; }
+  th { background: #f4f4f4; cursor: pointer; user-select: none; }
+  th.sorted-asc::after { content: " \25B2"; }
+  th.sorted-desc::after { content: " \25BC"; }
+  .magnitude-bar { display: inline-block; height: 0.7em; background: #4a90e2; vertical-align: middle; margin-right: 6px; }
+  .ci { color: #888; font-size: 0.85em; }
+  .probe { background: #fff8e1; }
+  .followup { font-weight: 600; }
+  .pilot-id { font-family: monospace; }
+  details { margin-top: 1.2rem; }
+  summary { cursor: pointer; color: #4a90e2; }
+</style>
+</head>
+<body>
+<h1>Malaria CT.gov Reconnaissance &mdash; Signal Table</h1>
+<p class="meta" id="meta">Loading...</p>
+<table id="signal-table"><thead></thead><tbody></tbody></table>
+<details>
+  <summary>About</summary>
+  <p>This table is the output of the <code>malaria-ct-recon</code> sprint. 10 pilots over the AACT 2026-04-12 snapshot, each quantifying one source of bias in malaria CT.gov data.</p>
+  <p>Spec + plan + source code: <a href="https://github.com/mahmood726-cyber/malaria-ct-recon">github.com/mahmood726-cyber/malaria-ct-recon</a></p>
+</details>
+<script>
+async function main() {
+  const resp = await fetch("data/signal-table.csv");
+  const text = await resp.text();
+  const rows = parseCSV(text);
+  document.getElementById("meta").textContent =
+    `${rows.length} pilots · AACT snapshot ${rows[0]?.aact_snapshot || "?"}`;
+  render(rows);
+}
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  const header = lines.shift().split(",");
+  return lines.map(line => {
+    const cells = splitCSVLine(line);
+    return Object.fromEntries(header.map((h, i) => [h, cells[i] ?? ""]));
+  });
+}
+function splitCSVLine(line) {
+  const out = [];
+  let cur = "", inQ = false;
+  for (const ch of line) {
+    if (ch === '"') { inQ = !inQ; continue; }
+    if (ch === "," && !inQ) { out.push(cur); cur = ""; continue; }
+    cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+function render(rows) {
+  const cols = [
+    {key: "pilot_id", label: "ID"},
+    {key: "pilot_title", label: "Pilot"},
+    {key: "magnitude_value", label: "Magnitude (95% CI)"},
+    {key: "n_trials_in_scope", label: "n"},
+    {key: "tractability_AACT_only", label: "Tractability"},
+    {key: "follow_up_potential", label: "Follow-up"},
+    {key: "notes", label: "Notes"},
+  ];
+  const thead = document.querySelector("#signal-table thead");
+  thead.innerHTML = "<tr>" + cols.map(c => `<th data-key="${c.key}">${c.label}</th>`).join("") + "</tr>";
+  thead.querySelectorAll("th").forEach((th, i) => {
+    th.addEventListener("click", () => sortBy(rows, cols[i].key));
+  });
+  drawBody(rows);
+}
+let sortKey = "follow_up_potential", sortAsc = false;
+function sortBy(rows, key) {
+  if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = false; }
+  rows.sort((a, b) => {
+    const av = isFinite(parseFloat(a[key])) ? parseFloat(a[key]) : a[key];
+    const bv = isFinite(parseFloat(b[key])) ? parseFloat(b[key]) : b[key];
+    return (av > bv ? 1 : av < bv ? -1 : 0) * (sortAsc ? 1 : -1);
+  });
+  document.querySelectorAll("th").forEach(th => th.classList.remove("sorted-asc", "sorted-desc"));
+  document.querySelector(`th[data-key="${key}"]`)?.classList.add(sortAsc ? "sorted-asc" : "sorted-desc");
+  drawBody(rows);
+}
+function drawBody(rows) {
+  const tbody = document.querySelector("#signal-table tbody");
+  tbody.innerHTML = "";
+  for (const r of rows) {
+    const tr = document.createElement("tr");
+    if (r.pilot_type === "tractability_probe") tr.classList.add("probe");
+    const mag = parseFloat(r.magnitude_value);
+    const lo = parseFloat(r.magnitude_ci_low);
+    const hi = parseFloat(r.magnitude_ci_high);
+    const magCell = isFinite(mag)
+      ? `<span class="magnitude-bar" style="width:${(mag*120).toFixed(1)}px"></span>${mag.toFixed(3)} <span class="ci">[${lo.toFixed(3)}, ${hi.toFixed(3)}]</span>`
+      : `<em class="ci">&mdash; (probe)</em>`;
+    const cells = [
+      `<td class="pilot-id">${escapeHtml(r.pilot_id)}</td>`,
+      `<td>${escapeHtml(r.pilot_title)}</td>`,
+      `<td>${magCell}</td>`,
+      `<td>${escapeHtml(r.n_trials_in_scope)}</td>`,
+      `<td>${escapeHtml(r.tractability_AACT_only)}</td>`,
+      `<td class="followup">${escapeHtml(r.follow_up_potential)}/5</td>`,
+      `<td>${escapeHtml(r.notes)}</td>`,
+    ];
+    tr.innerHTML = cells.join("");
+    tbody.appendChild(tr);
+  }
+}
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+main().catch(e => { document.getElementById("meta").textContent = "Error loading: " + e.message; });
+</script>
+</body>
+</html>
