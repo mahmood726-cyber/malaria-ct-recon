@@ -25,6 +25,9 @@ _ANTIMALARIAL_RX = re.compile(
     r"ferroquine|RTS,S|R21|PfSPZ|Mosquirix|MSP|AMA1|CSP)",
     re.IGNORECASE,
 )
+# The antimalarial-intervention clause intentionally catches trials of dual-use drugs
+# (e.g., quinine for leg cramps, atovaquone for pneumocystis prophylaxis); false
+# positives are handled in corpus_overrides.csv when material to a specific pilot.
 
 
 @dataclass(frozen=True)

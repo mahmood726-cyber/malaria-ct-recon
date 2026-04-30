@@ -27,10 +27,14 @@ class PreflightReport:
 def run(
     snapshot_dir: Path | str | None = None,
     overrides_path: Path | str = "corpus_overrides.csv",
-    expected_corpus_min: int = 1200,
-    expected_corpus_max: int = 1600,
+    expected_corpus_min: int = 2000,
+    expected_corpus_max: int = 2500,
 ) -> PreflightReport:
-    """Run preflight checks. Returns a report; caller decides exit code."""
+    """Run preflight checks. Returns a report; caller decides exit code.
+
+    Band 2000-2500 reflects the intentionally-broad WHO-antimalarial inclusion filter
+    — see design §5. Tightening would underrepresent trials of dual-use antimalarials.
+    """
     if snapshot_dir is None:
         cfg = config.load()
         snapshot_dir = cfg.snapshot_dir
