@@ -15,3 +15,7 @@ jobs:
           python-version: "3.11"
       - run: pip install -e .[dev]
       - run: pytest -q
+      - name: Install Sentinel
+        run: pip install git+https://github.com/mahmood726-cyber/sentinel.git
+      - name: Sentinel scan (fail on BLOCK)
+        run: python -m sentinel scan --repo .
