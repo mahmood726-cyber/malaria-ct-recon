@@ -3,7 +3,7 @@
 10-pilot reconnaissance of bias sources in malaria trial data on ClinicalTrials.gov.
 
 **Snapshot:** AACT 2026-04-12 (frozen).
-**Status:** v0.1.0 shipped 2026-04-30; v0.1.1 patch in progress.
+**Status:** v0.1.2 shipped 2026-05-03 — Methods Note paper draft + figure + sensitivity analysis. v0.2.0 reserved for submission-ready (post user review).
 
 See `docs/superpowers/specs/2026-04-30-malaria-ct-recon-design.md` for the design.
 
@@ -14,6 +14,21 @@ See `docs/superpowers/specs/2026-04-30-malaria-ct-recon-design.md` for the desig
 3. Run preflight: `python -m pilots.preflight`
 4. Run all pilots: `python -m pilots.run_all`
 5. Open `dashboard/index.html` in a browser
+
+## Methods Note paper draft
+
+A Synthēsis Methods Note (≤400 words) is drafted in `paper/methods-note-draft.md`
+and built to .docx by `paper/build_docx.py`. It hangs on the P01 (FDAAA
+results-posting) and P03 (WHO PCR-correction declaration) trajectories. Both
+mandates are undercomplied with by an order of magnitude; FDAAA compliance is
+rising while WHO PCR-correction declaration is declining.
+
+The §4 sensitivity analysis (uncomplicated-*P. falciparum* subset) is
+implemented in `pilots/p03_sensitivity_uncomplicated_falciparum.py`; its
+result automatically locks the body sentence variant via
+`pilots/p03_decision_rule.py` (output: `pilots/results/decision_rule.json`).
+Design spec: `docs/superpowers/specs/2026-05-03-methods-paper-design.md`,
+OTS-anchored 2026-05-03.
 
 ## Preregistration
 
