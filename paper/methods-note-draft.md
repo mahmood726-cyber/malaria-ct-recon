@@ -34,6 +34,6 @@ target: "Synthēsis Methods Note"
 2. U.S. Department of Health and Human Services. Clinical Trials Registration and Results Information Submission (Final Rule, 42 CFR Part 11). Federal Register 2017;81(183):64981–65157. Implements FDAAA 2007 §801, Pub. L. 110-85.
 3. World Health Organization. Methods and Techniques for Clinical Trials on Antimalarial Drug Efficacy: Genotyping to Identify Parasite Populations. Geneva: WHO; 2008.
 4. DeVito NJ, Bacon S, Goldacre B. Compliance with legal requirement to report clinical trial results on ClinicalTrials.gov: a cohort study. Lancet 2020;395:361–9. doi:10.1016/S0140-6736(19)33220-9
-5. Wilson EB. Probable inference, the law of succession, and statistical inference. JASA 1927;22:209–12. doi:10.1080/01621459.1927.10502953
+5. Wilson EB. Probable inference, the law of succession, and statistical inference. J Am Stat Assoc 1927;22:209–12. doi:10.1080/01621459.1927.10502953
 6. World Health Organization. Guidelines for the Treatment of Malaria, 3rd ed. Geneva: WHO; 2015.
 7. Bhatt S, et al. The effect of malaria control on Plasmodium falciparum in Africa between 2000 and 2015. Nature 2015;526:207–11. doi:10.1038/nature15535

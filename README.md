@@ -11,9 +11,10 @@ See `docs/superpowers/specs/2026-04-30-malaria-ct-recon-design.md` for the desig
 
 1. Install: `pip install -e .[dev]`
 2. Configure snapshot path: `cp aact_path.toml.example aact_path.toml` and edit
-3. Run preflight: `python -m pilots.preflight`
-4. Run all pilots: `python -m pilots.run_all`
-5. Open `dashboard/index.html` in a browser
+3. Run tests: `pip install -e .[dev] && pytest -q`  # 105 tests, ~22s
+4. Run preflight: `python -m pilots.preflight`
+5. Run all pilots: `python -m pilots.run_all`
+6. Open `dashboard/index.html` in a browser
 
 ## Methods Note paper draft
 

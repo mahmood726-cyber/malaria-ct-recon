@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 import pytest
+import pandas as pd
 
 
 DRAFT = Path("paper/methods-note-draft.md")
@@ -43,6 +44,7 @@ def test_includes_repo_url_and_data_availability():
     assert "github.com/mahmood726-cyber/malaria-ct-recon" in md
     assert re.search(r"AACT.*2026-04-12", md)
     assert "26a3fb0" in md  # preregistered framework HEAD
+    assert "535fa2e" in md  # OTS-anchored design spec commit
     assert re.search(r"Data availability", md, re.IGNORECASE)
 
 
@@ -70,3 +72,23 @@ def test_references_have_in_text_citations():
         f"citations {nums} are not contiguous from 1 to {max(nums)}"
     assert max(nums) <= refs_count, \
         f"highest citation [{max(nums)}] exceeds reference count {refs_count}"
+
+
+def test_headline_numbers_match_production_csvs():
+    """If pilot CSVs exist, the markdown headline numbers must match them.
+    Skipped on fresh clones where the pilots haven't been run yet."""
+    p01_path = Path("pilots/results/p01.csv")
+    p03_path = Path("pilots/results/p03.csv")
+    if not (p01_path.exists() and p03_path.exists()):
+        pytest.skip("pilot CSVs not present (fresh clone); skipping cross-check")
+    p01 = pd.read_csv(p01_path).iloc[0]
+    p03 = pd.read_csv(p03_path).iloc[0]
+    md = _md()
+    p01_pct = round(float(p01["magnitude_value"]) * 100, 1)
+    p03_pct = round(float(p03["magnitude_value"]) * 100, 1)
+    p01_n = int(p01["n_trials_in_scope"])
+    p03_n = int(p03["n_trials_in_scope"])
+    assert f"{p01_pct} %" in md or f"{p01_pct}%" in md, f"P01 headline {p01_pct}% not in draft"
+    assert f"{p03_pct} %" in md or f"{p03_pct}%" in md, f"P03 headline {p03_pct}% not in draft"
+    assert f"{p01_n:,}" in md or str(p01_n) in md, f"P01 n={p01_n} not in draft"
+    assert f"{p03_n:,}" in md or str(p03_n) in md, f"P03 n={p03_n} not in draft"

@@ -112,8 +112,12 @@ def main() -> int:
     out = Path("pilots/results/p03_expanded_regex.csv")
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False)
-    prod = df[df["variant"] == "production"].iloc[0]
-    expd = df[df["variant"] == "expanded"].iloc[0]
+    prod_df = df[df["variant"] == "production"]
+    expd_df = df[df["variant"] == "expanded"]
+    if prod_df.empty or expd_df.empty:
+        raise ValueError("p03_expanded_regex.run() produced unexpected empty DataFrame")
+    prod = prod_df.iloc[0]
+    expd = expd_df.iloc[0]
     delta_pp = (expd["rate"] - prod["rate"]) * 100
     print(
         f"p03_expanded_regex OK: production={prod['rate']:.4f} ({prod['k']}/{prod['n']}), "
