@@ -65,6 +65,9 @@ def make(csv_path: Path, out_png: Path, out_svg: Path) -> None:
     df = pd.read_csv(csv_path)
     df = df[(df["year"] >= 2004) & (df["year"] <= 2024)].sort_values("year").reset_index(drop=True)
 
+    if df.empty:
+        raise ValueError(f"No rows in year range 2004–2024 in {csv_path}")
+
     # Pre/post split annotations
     def split(df, col_n, col_k, cutoff):
         pre = df[df["year"] < cutoff]

@@ -59,3 +59,16 @@ def test_figure_d_deterministic(tmp_path: Path):
     mfd.make(csv, out_png_b, out_svg_b)
     # SVG is text-deterministic when matplotlib metadata is suppressed.
     assert out_svg_a.read_bytes() == out_svg_b.read_bytes()
+
+
+def test_figure_d_empty_csv_raises(tmp_path: Path):
+    """Empty CSV (or all rows outside 2004–2024) should fail closed, not crash."""
+    csv = tmp_path / "empty.csv"
+    csv.write_text(
+        "year,n_p01,k_p01,rate_p01,n_p03,k_p03,rate_p03\n",
+        encoding="utf-8",
+    )
+    out_png = tmp_path / "x.png"
+    out_svg = tmp_path / "x.svg"
+    with pytest.raises(ValueError, match="No rows in year range"):
+        mfd.make(csv, out_png, out_svg)
