@@ -59,9 +59,14 @@ def test_figure_caption_block_present():
 
 
 def test_references_have_in_text_citations():
-    """Vancouver: each numbered ref [N] must appear at least once in the body."""
+    """Vancouver: each numbered ref [N] must appear at least once in the body,
+    and the citation set must be contiguous from 1 to the highest number."""
     md = _md()
     body, _, refs = md.partition("## References")
     nums = sorted({int(n) for n in re.findall(r"\[(\d+)\]", body)})
     assert nums, "no in-text [N] citations found"
-    assert max(nums) <= len(re.findall(r"^\s*\d+\.\s+", refs, re.MULTILINE))
+    refs_count = len(re.findall(r"^\s*\d+\.\s+", refs, re.MULTILINE))
+    assert nums == list(range(1, max(nums) + 1)), \
+        f"citations {nums} are not contiguous from 1 to {max(nums)}"
+    assert max(nums) <= refs_count, \
+        f"highest citation [{max(nums)}] exceeds reference count {refs_count}"
