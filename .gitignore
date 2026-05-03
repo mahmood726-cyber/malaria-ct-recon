@@ -8,7 +8,7 @@ build/
 dist/
 aact_path.toml
 pilots/results/*.csv
-pilots/results/*.json
+!pilots/results/decision_rule.json
 !pilots/results/.gitkeep
 PROGRESS.md
 .venv/
