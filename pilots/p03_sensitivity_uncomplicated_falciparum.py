@@ -47,6 +47,7 @@ def run(con: duckdb.DuckDBPyConnection, corpus: Corpus) -> pd.DataFrame:
     )
     keep = cond_by_trial[cond_by_trial.apply(is_uncomplicated_falciparum)].index.tolist()
     subset = p03_per_trial[p03_per_trial["nct_id"].isin(keep)].copy()
+    subset = subset[(subset["year"] >= 2004) & (subset["year"] <= 2024)].copy()
     g = subset.groupby("year").agg(n=("nct_id", "count"), k=("pcr_corrected", "sum"))
     g["rate"] = g.apply(lambda r: (r["k"] / r["n"]) if r["n"] > 0 else float("nan"), axis=1)
     return g.reset_index().sort_values("year").reset_index(drop=True)
