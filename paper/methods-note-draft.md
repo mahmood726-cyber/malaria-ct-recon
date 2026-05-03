@@ -21,7 +21,7 @@ target: "Synthēsis Methods Note"
 **Data availability.** Code, AACT 2026-04-12 corpus manifest, and signal table at `github.com/mahmood726-cyber/malaria-ct-recon`; framework HEAD `26a3fb0` preregistered 2026-04-30; design spec preregistered via OpenTimestamps Bitcoin anchor 2026-05-03 (commit `535fa2e`). Full 10-pilot reconnaissance and dashboard are open at the same URL.
 
 <!-- figure-caption-begin -->
-**Figure 1.** Compliance trajectories with two reporting mandates among registered malaria trials (n = 2,277, AACT 2026-04-12). **Left:** results-posting within 12 months of primary completion (P01); FDAAA Final Rule (2017) marked. **Right:** PCR-correction declaration in primary outcome (P03); WHO 2008 mandate marked. Ribbons are pointwise Wilson 95 % CIs; years with n < 10 lightened.
+**Figure 1.** Compliance trajectories with two reporting mandates among registered malaria trials (n = 2,277, AACT 2026-04-12). **Left:** results-posting within 12 months of primary completion (P01); FDAAA Final Rule (2017) marked. **Right:** PCR-correction declaration in primary outcome (P03); WHO 2008 mandate marked. Note differing y-axes. Ribbons are pointwise Wilson 95 % CIs; years with n < 10 lightened.
 <!-- figure-caption-end -->
 
 **Conflicts of interest.** None.
