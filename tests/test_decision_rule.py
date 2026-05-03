@@ -50,3 +50,16 @@ def test_from_csv(tmp_path: Path):
     payload = json.loads(out_path.read_text(encoding="utf-8"))
     assert "band" in payload and "body_sentence" in payload
     assert payload["mandate_year"] == 2008
+
+
+def test_from_csv_empty_post_bucket_raises(tmp_path: Path):
+    """Empty post-mandate bucket should fail closed, not silently produce verdict."""
+    csv = tmp_path / "sens.csv"
+    csv.write_text(
+        "year,n,k,rate\n"
+        "2005,40,2,0.05\n2006,30,2,0.067\n2007,30,1,0.033\n",
+        encoding="utf-8",
+    )
+    out_path = tmp_path / "decision.json"
+    with pytest.raises(ValueError, match="post-mandate bucket is empty"):
+        dr.from_csv(csv, out_path, mandate_year=2008)

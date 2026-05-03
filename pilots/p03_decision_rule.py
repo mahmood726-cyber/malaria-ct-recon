@@ -22,6 +22,11 @@ ATTENUATE_SENTENCE = (
     "the decline is partially attributable to portfolio shift but persists within "
     "the uncomplicated-falciparum subset."
 )
+# Note: spec §4 originally said "flat at ~5% throughout"; we drop the speculative
+# "~5%" because the body_sentence is consumed verbatim by T12, and a hardcoded
+# rate would contradict Figure D if DISAPPEAR ever fires with a different rate.
+# DISAPPEAR did not fire on the AACT 2026-04-12 data (band=attenuates), so this
+# is currently moot, but the documented divergence preserves the integrity claim.
 DISAPPEAR_SENTENCE = (
     "the apparent decline is largely explained by portfolio shift; within indications "
     "where PCR-correction applies, compliance has been flat throughout."
@@ -90,12 +95,17 @@ def from_csv(csv_path: Path, out_path: Path, mandate_year: int = 2008) -> dict:
 
     Returns:
         The decision rule payload dict.
+
+    Raises:
+        ValueError: if the post-mandate bucket is empty (no data >= mandate_year).
     """
     df = pd.read_csv(csv_path)
     pre = df[df["year"] < mandate_year]
     post = df[df["year"] >= mandate_year]
     pre_n, pre_k = int(pre["n"].sum()), int(pre["k"].sum())
     post_n, post_k = int(post["n"].sum()), int(post["k"].sum())
+    if post_n == 0:
+        raise ValueError("post-mandate bucket is empty; cannot apply decision rule")
     pre_rate = (pre_k / pre_n) if pre_n > 0 else 0.0
     post_rate = (post_k / post_n) if post_n > 0 else 0.0
     payload = apply(pre_rate=pre_rate, post_rate=post_rate, pre_n=pre_n, post_n=post_n)
