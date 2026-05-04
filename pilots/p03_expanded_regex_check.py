@@ -29,10 +29,20 @@ _PCR_EXPANDED_RX = re.compile(
     r"genotyping-corrected|parasitologically.corrected|"
     r"\bACPR\b|adequate\s+clinical\s+and\s+parasitological\s+response|"
     r"recrudescence.{0,30}reinfection|protocol-defined\s+recrudescence|"
-    r"\bmsp[12]\s+genotyping\b|\bglurp\s+genotyping\b",
+    r"\bmsp[12]\s+genotyping\b|\bglurp\s+genotyping\b|"
+    # v0.1.6 P2-1: K13-era resistance-marker genotyping (post-2014 trials).
+    r"\bK13\b|\bkelch[\s-]?13\b|\bpfcrt\b|\bpfmdr1\b|\bpfdhfr\b|\bpfdhps\b",
     re.IGNORECASE,
 )
-_PCR_NEG_RX = re.compile(r"PCR-uncorrected|PCR\s*uncorrected", re.IGNORECASE)
+# v0.1.6 P1-7: same negation extension as production P03 — keeps the broad
+# regex from misclassifying ACPR-uncorrected / without-PCR-correction text.
+_PCR_NEG_RX = re.compile(
+    r"PCR-uncorrected|PCR\s*uncorrected|"
+    r"\b(?:PCR\s*)?unadjusted\b|"
+    r"without\s+PCR\s+correction|"
+    r"\bACPR-uncorrected\b|ACPR\s*\(\s*without\s+PCR\s+correction",
+    re.IGNORECASE,
+)
 
 
 def _is_pcr_corrected_expanded(measure: str) -> bool:
@@ -107,23 +117,23 @@ def run(con: duckdb.DuckDBPyConnection, corpus: Corpus) -> pd.DataFrame:
 def main() -> int:
     """Run expanded-regex check on real AACT and write results."""
     cfg = config.load()
-    con = aact.open(cfg.snapshot_dir)
-    c = corpus_mod.build(con)
-    df = run(con=con, corpus=c)
-    out = Path("pilots/results/p03_expanded_regex.csv")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(out, index=False)
-    by_variant = {row["variant"]: row for _, row in df.iterrows()}
-    if "production" not in by_variant or "expanded" not in by_variant:
-        raise ValueError("p03_expanded_regex.run() produced unexpected empty DataFrame")
-    prod = by_variant["production"]
-    expd = by_variant["expanded"]
-    delta_pp = (expd["rate"] - prod["rate"]) * 100
-    print(
-        f"p03_expanded_regex OK: production={prod['rate']:.4f} ({prod['k']}/{prod['n']}), "
-        f"expanded={expd['rate']:.4f} ({expd['k']}/{expd['n']}), "
-        f"delta_pp={delta_pp:+.2f}"
-    )
+    with aact.connect(cfg.snapshot_dir) as con:
+        c = corpus_mod.build(con)
+        df = run(con=con, corpus=c)
+        out = Path("pilots/results/p03_expanded_regex.csv")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(out, index=False)
+        by_variant = {row["variant"]: row for _, row in df.iterrows()}
+        if "production" not in by_variant or "expanded" not in by_variant:
+            raise ValueError("p03_expanded_regex.run() produced unexpected empty DataFrame")
+        prod = by_variant["production"]
+        expd = by_variant["expanded"]
+        delta_pp = (expd["rate"] - prod["rate"]) * 100
+        print(
+            f"p03_expanded_regex OK: production={prod['rate']:.4f} ({prod['k']}/{prod['n']}), "
+            f"expanded={expd['rate']:.4f} ({expd['k']}/{expd['n']}), "
+            f"delta_pp={delta_pp:+.2f}"
+        )
     return 0
 
 

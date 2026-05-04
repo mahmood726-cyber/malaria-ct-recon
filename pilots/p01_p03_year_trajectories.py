@@ -106,13 +106,13 @@ def run(con: duckdb.DuckDBPyConnection, corpus: Corpus) -> pd.DataFrame:
 
 def main() -> int:
     cfg = config.load()
-    con = aact.open(cfg.snapshot_dir)
-    c = corpus_mod.build(con)
-    df = run(con=con, corpus=c)
-    out = Path("pilots/results/year_trajectories.csv")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(out, index=False)
-    print(f"year_trajectories OK: rows={len(df)}, years {df['year'].min()}-{df['year'].max()}")
+    with aact.connect(cfg.snapshot_dir) as con:
+        c = corpus_mod.build(con)
+        df = run(con=con, corpus=c)
+        out = Path("pilots/results/year_trajectories.csv")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(out, index=False)
+        print(f"year_trajectories OK: rows={len(df)}, years {df['year'].min()}-{df['year'].max()}")
     return 0
 
 

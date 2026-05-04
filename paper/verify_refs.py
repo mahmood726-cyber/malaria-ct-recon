@@ -57,6 +57,13 @@ def resolve_doi(doi: str, *, timeout: float = 10.0) -> tuple[str, int]:
     """
     if not _DOI_VALIDATE_RX.match(doi):
         return "INVALID", 0
+    # v0.1.6 P2-4: defensive reject `..` segments. `urllib.parse.quote(.., safe="/")`
+    # does not encode `.`, so `10.1234/../../etc/passwd` survives encoding;
+    # `requests` then collapses the path before the GET. Author-controlled
+    # refs.bib makes this non-exploitable in shipped state, but the check
+    # is one line and removes a latent surface.
+    if "/.." in doi or "../" in doi or doi.endswith("/.."):
+        return "INVALID", 0
     encoded = urllib.parse.quote(doi, safe="/")
     r = requests.get(
         CROSSREF_API + encoded,

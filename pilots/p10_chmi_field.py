@@ -114,11 +114,11 @@ def main() -> int:
     from malaria_ct_recon import config, corpus as corpus_mod
 
     cfg = config.load()
-    con = aact.open(cfg.snapshot_dir)
-    c = corpus_mod.build(con)
-    result = run(con=con, corpus=c, aact_snapshot=cfg.snapshot_label, seed=20260430)
-    schema.write([result], Path("pilots/results/p10.csv"))
-    print(f"P10 OK: {result.notes}")
+    with aact.connect(cfg.snapshot_dir) as con:
+        c = corpus_mod.build(con)
+        result = run(con=con, corpus=c, aact_snapshot=cfg.snapshot_label, seed=20260430)
+        schema.write([result], Path("pilots/results/p10.csv"))
+        print(f"P10 OK: {result.notes}")
     return 0
 
 

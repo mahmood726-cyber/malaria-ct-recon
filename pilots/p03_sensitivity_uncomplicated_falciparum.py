@@ -25,12 +25,15 @@ _INCLUDE_RX = re.compile(r"\b(falciparum|uncomplicated\s+malaria)\b", re.IGNOREC
 # v0.1.4 P1-5: harmonised exclude list. Added the chemoprevention modalities
 # that are themselves the post-2008 portfolio shift — Seasonal Malaria
 # Chemoprevention (SMC), IPTi (infants) / IPTsc (school children), and the
-# 2022-renamed PMC (Perennial Malaria Chemoprevention). Without these, the
-# §4 "uncomplicated falciparum" subset still includes preventive trials
-# whose primary endpoint is incidence, not ACPR.
+# 2022-renamed PMC (Perennial Malaria Chemoprevention).
+# v0.1.6 P2-2: added the obvious AACT paraphrases the literal-spec exclude
+# list missed — "prophylaxis" / "prophylactic" / "preventive treatment" /
+# bare "mass drug administration".
 _EXCLUDE_RX = re.compile(
     r"\b(severe|complicated|vivax-only|ovale-only|malariae-only|"
-    r"prevention|chemoprevention|mda|iptp|ipti|iptsc|smc|pmc|"
+    r"prevention|preventive\s+treatment|prophylaxis|prophylactic|"
+    r"chemoprevention|mda|mass\s+drug\s+administration|"
+    r"iptp|ipti|iptsc|smc|pmc|"
     r"seasonal\s+malaria\s+chemoprevention|vaccine)\b",
     re.IGNORECASE,
 )
@@ -62,14 +65,14 @@ def run(con: duckdb.DuckDBPyConnection, corpus: Corpus) -> pd.DataFrame:
 
 def main() -> int:
     cfg = config.load()
-    con = aact.open(cfg.snapshot_dir)
-    c = corpus_mod.build(con)
-    df = run(con=con, corpus=c)
-    out = Path("pilots/results/p03_sensitivity.csv")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(out, index=False)
-    n_total, k_total = int(df["n"].sum()), int(df["k"].sum())
-    print(f"p03_sensitivity OK: n_subset={n_total}, k_subset={k_total}, rate={k_total/max(n_total,1):.4f}")
+    with aact.connect(cfg.snapshot_dir) as con:
+        c = corpus_mod.build(con)
+        df = run(con=con, corpus=c)
+        out = Path("pilots/results/p03_sensitivity.csv")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(out, index=False)
+        n_total, k_total = int(df["n"].sum()), int(df["k"].sum())
+        print(f"p03_sensitivity OK: n_subset={n_total}, k_subset={k_total}, rate={k_total/max(n_total,1):.4f}")
     return 0
 
 

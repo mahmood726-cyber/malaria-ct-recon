@@ -25,16 +25,35 @@ _PCR_RX = re.compile(
     r"genotype-corrected|molecularly.corrected",
     re.IGNORECASE,
 )
-_PCR_NEG_RX = re.compile(r"PCR-uncorrected|PCR\s*uncorrected", re.IGNORECASE)
+_PCR_NEG_RX = re.compile(
+    # v0.1.6 P1-7: extended to catch ACPR-uncorrected and "without PCR
+    # correction" registry phrasings. Original regex only matched explicit
+    # "PCR-uncorrected"; ACPR text often paired with "uncorrected" / "without
+    # PCR correction" qualifiers and was being misclassified as PCR-corrected.
+    r"PCR-uncorrected|PCR\s*uncorrected|"
+    r"\b(?:PCR\s*)?unadjusted\b|"
+    r"without\s+PCR\s+correction|"
+    r"\bACPR-uncorrected\b|ACPR\s*\(\s*without\s+PCR\s+correction",
+    re.IGNORECASE,
+)
 _VACCINE_RX = re.compile(r"vaccine|RTS,S|R21|PfSPZ|sporozoite|CSP|MSP|AMA1", re.IGNORECASE)
 _PK_RX = re.compile(r"pharmacokinetic|AUC|Cmax|drug concentration", re.IGNORECASE)
-# v0.1.4 P1-9: vector-control / device-combo exclusion for the drug-efficacy
-# filter. Trials combining a DRUG intervention with insecticide-treated nets,
-# IRS, larvicide, etc. typically register an incidence-of-clinical-malaria
-# endpoint where PCR-correction is not the conventional construction.
+# v0.1.4 P1-9 / v0.1.6 P1-8: vector-control / device-combo exclusion for the
+# drug-efficacy filter. Trials combining a DRUG intervention with insecticide-
+# treated nets, IRS, larvicide, etc. typically register an incidence-of-
+# clinical-malaria endpoint where PCR-correction is not the conventional
+# construction. v0.1.6 adds brand-name and chemical-class registrations
+# (Olyset, Interceptor G2, PermaNet, chlorfenapyr, ATSB, ivermectin MDA).
 _VECTOR_CONTROL_RX = re.compile(
-    r"\bbednet\b|\bITN\b|insecticide|larvicide|"
-    r"indoor\s+residual\s+spraying|\bIRS\b|pyrethroid|piperonyl\s+butoxide",
+    r"\bbednet\b|\bITN\b|\bLLIN\b|long-lasting\s+insecticidal\s+net|"
+    r"insecticide|larvicide|"
+    r"indoor\s+residual\s+spraying|\bIRS\b|pyrethroid|piperonyl\s+butoxide|\bPBO\b|"
+    r"chlorfenapyr|alpha-cypermethrin|deltamethrin|permethrin|"
+    r"transfluthrin|metofluthrin|"
+    r"\bOlyset\b|\bInterceptor\b|\bPermaNet\b|\bRoyal\s+Guard\b|\bDuranet\b|"
+    r"\bMAGNet\b|\bYorkool\b|\bYahe\b|"
+    r"attractive\s+toxic\s+sugar\s+bait|\bATSB\b|spatial\s+repellent|"
+    r"ivermectin\s+(MDA|mass)",
     re.IGNORECASE,
 )
 
@@ -133,11 +152,11 @@ def main() -> int:
     from malaria_ct_recon import config, corpus as corpus_mod
 
     cfg = config.load()
-    con = aact.open(cfg.snapshot_dir)
-    c = corpus_mod.build(con)
-    result = run(con=con, corpus=c, aact_snapshot=cfg.snapshot_label, seed=20260430)
-    schema.write([result], Path("pilots/results/p03.csv"))
-    print(f"P03 OK: {result.notes}")
+    with aact.connect(cfg.snapshot_dir) as con:
+        c = corpus_mod.build(con)
+        result = run(con=con, corpus=c, aact_snapshot=cfg.snapshot_label, seed=20260430)
+        schema.write([result], Path("pilots/results/p03.csv"))
+        print(f"P03 OK: {result.notes}")
     return 0
 
 

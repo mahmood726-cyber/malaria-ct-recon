@@ -70,3 +70,29 @@ def test_load_overrides_unknown_action_raises(tmp_path: Path):
     )
     with pytest.raises(ValueError, match="badvalue|Unknown action"):
         corpus.build(aact.open(tmp_path), overrides_path=ov)
+
+
+# v0.1.6 P1-11: corpus_overrides audit-trail validation (v0.1.4 P2-10 hardening).
+
+def test_load_overrides_empty_reason_raises(tmp_path: Path):
+    """v0.1.4 P2-10: empty reason column must fail closed for audit trail."""
+    _seed(tmp_path)
+    ov = tmp_path / "ov.csv"
+    ov.write_text(
+        "nct_id,action,reason,added_by,added_on\nNCT99,include,,mahmood,2026-04-30\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="empty.*reason|reason.*empty"):
+        corpus.build(aact.open(tmp_path), overrides_path=ov)
+
+
+def test_load_overrides_empty_added_by_raises(tmp_path: Path):
+    """v0.1.4 P2-10: empty added_by column must fail closed for audit trail."""
+    _seed(tmp_path)
+    ov = tmp_path / "ov.csv"
+    ov.write_text(
+        "nct_id,action,reason,added_by,added_on\nNCT99,include,manual review,,2026-04-30\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="empty.*added_by|added_by.*empty"):
+        corpus.build(aact.open(tmp_path), overrides_path=ov)

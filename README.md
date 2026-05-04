@@ -3,7 +3,7 @@
 10-pilot reconnaissance of bias sources in malaria trial data on ClinicalTrials.gov.
 
 **Snapshot:** AACT 2026-04-12 (frozen).
-**Status:** v0.1.4 shipped 2026-05-04 — multi-persona review fixes (5 P0 + most P1 closed). v0.1.3 swapped WHO mandate year 2008→2009 after the 2008 doc was identified as the wrong reference. v0.2.0 reserved for submission-ready (post user review).
+**Status:** v0.1.6 shipped 2026-05-04 — closes all remaining review P1/P2 (filter brand-name extension, ACPR-uncorrected negation, K13 markers, all v0.1.4 test gaps, dashboard a11y polish, JS extraction, CSP tightening). v0.1.3 swapped WHO mandate year 2008→2009; v0.1.4 added vector-control + chemoprevention exclusions; v0.1.5 closed artifact drift. v0.2.0 reserved for ICTRP/PACTR scaling.
 
 See `docs/superpowers/specs/2026-04-30-malaria-ct-recon-design.md` for the design.
 
@@ -54,7 +54,7 @@ AACT 2026-04-12 corpus = ~2,277 malaria trials (intentionally broad WHO-antimala
 |---|---|---|---|---|
 | P01 | Reporting compliance | 7.6% [6.3%, 9.1%] | 1,420 | 4/5 |
 | P02 | Endpoint-family chaos | 28.5% [25.8%, 31.4%] | 997 | 5/5 |
-| P03 | PCR-corrected reporting | 2.8% [2.0%, 3.8%] strict / 7.5% [6.2%, 9.1%] broad | 1,270 | 5/5 |
+| P03 | PCR-corrected reporting | 2.8% [2.0%, 3.8%] strict / 7.7% [6.3%, 9.3%] broad | 1,267 | 5/5 |
 | P04 | Resistance-era pooling | 19.1% [14.8%, 24.4%] | 256 cells | 5/5 |
 | P05 | Pediatric dose fragmentation | 17.0 doses/cell [9.18, 26.28] | 22 cells | 3/5 |
 | P06 | Cross-registry coverage (probe) | — | 24/2,277 | 2/5 |

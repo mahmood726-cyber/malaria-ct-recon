@@ -5,6 +5,11 @@ on:
     branches: [master]
   pull_request:
 
+# v0.1.6 P2-5: principle-of-least-privilege. Workflow only reads source +
+# runs tests; no GITHUB_TOKEN write needed.
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest

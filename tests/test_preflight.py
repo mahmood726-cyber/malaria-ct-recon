@@ -35,3 +35,29 @@ def test_preflight_fails_when_required_table_missing(fake_aact: Path) -> None:
                            expected_corpus_min=1, expected_corpus_max=10)
     assert report.passed is False
     assert "studies" in report.failure_reason
+
+
+# v0.1.6 P1-11: schema-drift branch coverage (v0.1.4 P1-22 hardening).
+
+def test_preflight_detects_schema_drift(fake_aact: Path) -> None:
+    """v0.1.4 P1-22: missing required columns must fail preflight closed."""
+    # Drop the start_date column from studies.txt (a required column for p04/p08).
+    studies = fake_aact / "studies.txt"
+    lines = studies.read_text(encoding="utf-8").splitlines(keepends=True)
+    header_cols = lines[0].rstrip("\n").split("|")
+    if "start_date" in header_cols:
+        idx = header_cols.index("start_date")
+        new_header = "|".join(c for i, c in enumerate(header_cols) if i != idx) + "\n"
+        new_data = []
+        for line in lines[1:]:
+            cells = line.rstrip("\n").split("|")
+            new_data.append("|".join(c for i, c in enumerate(cells) if i != idx) + "\n")
+        studies.write_text(new_header + "".join(new_data), encoding="utf-8")
+    overrides = fake_aact / "ov.csv"
+    overrides.write_text("nct_id,action,reason,added_by,added_on\n", encoding="utf-8")
+    report = preflight.run(snapshot_dir=fake_aact, overrides_path=overrides,
+                           expected_corpus_min=1, expected_corpus_max=10)
+    assert report.passed is False
+    assert "schema drift" in report.failure_reason
+    assert "studies" in report.schema_drift
+    assert "start_date" in report.schema_drift["studies"]

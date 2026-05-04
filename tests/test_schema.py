@@ -63,3 +63,45 @@ def test_infinity_magnitude_serialises_to_empty_string(tmp_path: Path) -> None:
     schema.write([r], tmp_path / "out.csv")
     rows = list(csv.DictReader((tmp_path / "out.csv").open(encoding="utf-8")))
     assert rows[0]["magnitude_value"] == ""
+
+
+# v0.1.6 P1-11: tests for v0.1.4 _csv_safe formula-injection prefix.
+
+@pytest.mark.parametrize("formula_lead", ["=", "+", "@", "\t"])
+def test_csv_safe_prefixes_formula_leads(tmp_path: Path, formula_lead: str) -> None:
+    """v0.1.4 P1-28: cells beginning with =+@\\t get a leading apostrophe.
+
+    OWASP CSV-injection mitigation. Excel reads the apostrophe-prefixed cell
+    as text, not as a formula. (`\\r` is excluded from this parameterisation
+    because csv.writer normalises CR to LF; mitigation still applies — see
+    test_csv_safe_handles_cr below.)
+    """
+    payload = f"{formula_lead}cmd|/c calc"
+    r = make_result(notes=payload)
+    schema.write([r], tmp_path / "out.csv")
+    rows = list(csv.DictReader((tmp_path / "out.csv").open(encoding="utf-8")))
+    # csv.DictReader returns the cell with the apostrophe still present.
+    assert rows[0]["notes"].startswith("'"), (
+        f"_csv_safe failed to prefix {formula_lead!r}; cell={rows[0]['notes']!r}"
+    )
+
+
+def test_csv_safe_handles_cr(tmp_path: Path) -> None:
+    """A leading \\r is mitigated even though csv.writer normalises the CR itself."""
+    r = make_result(notes="\rcmd|/c calc")
+    schema.write([r], tmp_path / "out.csv")
+    rows = list(csv.DictReader((tmp_path / "out.csv").open(encoding="utf-8")))
+    assert rows[0]["notes"].startswith("'"), (
+        f"_csv_safe failed to prefix '\\r'; cell={rows[0]['notes']!r}"
+    )
+
+
+def test_csv_safe_does_not_touch_safe_leads(tmp_path: Path) -> None:
+    """Negative space — alphabetic / digit / hyphen cells are unchanged."""
+    r = make_result(notes="35/1270 drug-efficacy trials report a PCR-corrected primary outcome")
+    schema.write([r], tmp_path / "out.csv")
+    raw = (tmp_path / "out.csv").read_text(encoding="utf-8")
+    # No spurious apostrophe-prefix on a safe lead.
+    assert "'35/1270" not in raw
+    rows = list(csv.DictReader((tmp_path / "out.csv").open(encoding="utf-8")))
+    assert rows[0]["notes"].startswith("35/1270")

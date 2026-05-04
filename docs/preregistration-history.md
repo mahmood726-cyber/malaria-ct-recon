@@ -105,3 +105,37 @@ Both changes preserve the v0.1.3 thesis (FDAAA enforcement vs. WHO-norm
 trajectories diverge) and strengthen the P03 inference. Spec OTS anchor
 unchanged; framework HEAD `26a3fb0` unchanged; the changes are bounded to
 filter regexes and live as registered amendments here.
+
+## v0.1.6 divergences (2026-05-04)
+
+Three further filter refinements landed in v0.1.6, all flagged by the second
+multi-persona re-review (P1-7, P1-8, P2-1, P2-2):
+
+- **`_PCR_NEG_RX` extended (P1-7)**: catches `ACPR-uncorrected`,
+  `ACPR (without PCR correction)`, `unadjusted` phrasings. Closes the
+  asymmetric false-positive surfaced by the v0.1.4 review where ACPR text
+  paired with explicit "uncorrected" qualifiers was being misclassified
+  as PCR-corrected.
+
+- **`_VECTOR_CONTROL_RX` brand-name extension (P1-8)**: now matches
+  Olyset / Olyset Plus, Interceptor / Interceptor G2 (chlorfenapyr), PermaNet
+  3.0, Royal Guard, MAGNet, Yorkool, Yahe, Duranet, ATSB / spatial repellents,
+  ivermectin MDA, and the chemical classes chlorfenapyr / alpha-cypermethrin /
+  deltamethrin / permethrin / transfluthrin / metofluthrin. Effect on the
+  P03 denominator: 1,270 → 1,267 (3 more drug+device combos excluded).
+  P03 strict 35/1270 (2.76 %) → 35/1267 (2.76 %) — direction unchanged.
+
+- **`_PCR_EXPANDED_RX` K13-era markers (P2-1)**: broad regex now matches
+  K13 / kelch13 / kelch-13 / pfcrt / pfmdr1 / pfdhfr / pfdhps. Effect on
+  the P03 broad rate: 7.5 % → 7.7 % [6.3, 9.3] (97 trials matched, was 95).
+
+- **§4 EXCLUDE list paraphrases (P2-2)**: now matches `prophylaxis`,
+  `prophylactic`, `preventive treatment`, bare `mass drug administration`.
+  Sensitivity n_total: 162 → 161 (one prophylaxis trial dropped from
+  uncomplicated-falciparum subset). Pre-2009 n_pre unchanged at 26;
+  post-2009 n=135. Fisher p shifted 0.052 → 0.053 (negligible).
+
+All four refinements preserve the v0.1.5 thesis. Spec OTS anchor unchanged;
+framework HEAD `26a3fb0` unchanged. Headline integrity unchanged: P01
+trajectory still rises ~3.6× across FDAAA Final Rule (p<0.001); P03
+trajectory still falls ~3.5× across WHO 2009 (p=0.008).
