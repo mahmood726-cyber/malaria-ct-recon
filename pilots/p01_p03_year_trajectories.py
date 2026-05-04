@@ -14,7 +14,9 @@ import pandas as pd
 from malaria_ct_recon import aact, config
 from malaria_ct_recon import corpus as corpus_mod
 from malaria_ct_recon.corpus import Corpus
-from pilots.p03_pcr_corrected import _VACCINE_RX, _PK_RX, _is_pcr_corrected
+from pilots.p03_pcr_corrected import (
+    _VACCINE_RX, _PK_RX, _VECTOR_CONTROL_RX, _is_pcr_corrected,
+)
 
 
 def _p01_per_trial(con: duckdb.DuckDBPyConnection, corpus: Corpus) -> pd.DataFrame:
@@ -51,7 +53,8 @@ def _p03_per_trial(con: duckdb.DuckDBPyConnection, corpus: Corpus) -> pd.DataFra
         has_drug = any(str(t).upper() == "DRUG" for t in group["intervention_type"].astype(str))
         names = group["name"].astype(str).tolist()
         has_vaccine = any(_VACCINE_RX.search(n) for n in names)
-        if has_drug and not has_vaccine:
+        has_vector = any(_VECTOR_CONTROL_RX.search(n) for n in names)
+        if has_drug and not has_vaccine and not has_vector:
             drug_trials.add(str(nct_id))
 
     do = design_outcomes[design_outcomes["nct_id"].astype(str).isin(drug_trials)].copy()

@@ -56,19 +56,17 @@ def _count(
     interventions = aact.table(con, "interventions")
     design_outcomes = aact.table(con, "design_outcomes")
 
-    # Step 1: Identify drug-only efficacy trials
+    # Step 1: Identify drug-only efficacy trials (mirrors P03 production filter)
     in_corpus = interventions[interventions["nct_id"].astype(str).isin(corpus.included)].copy()
-
     drug_trials: set[str] = set()
-    for nct_id in in_corpus["nct_id"].unique():
-        row_group = in_corpus[in_corpus["nct_id"] == nct_id]
+    for nct_id, row_group in in_corpus.groupby("nct_id"):
         has_drug = any(
             str(t).upper() == "DRUG" for t in row_group["intervention_type"].astype(str)
         )
         names_list = row_group["name"].astype(str).tolist()
         has_vaccine = any(p03prod._VACCINE_RX.search(n) for n in names_list)
-
-        if has_drug and not has_vaccine:
+        has_vector = any(p03prod._VECTOR_CONTROL_RX.search(n) for n in names_list)
+        if has_drug and not has_vaccine and not has_vector:
             drug_trials.add(str(nct_id))
 
     # Step 2: Find primary outcomes in drug trials

@@ -39,10 +39,25 @@ def test_year_trajectories_aggregates_match_production_pilots(fake_aact: Path) -
 
     # Year-binning excludes trials with missing primary_completion_date,
     # so totals may be <= production. Production is the upper bound.
+    # v0.1.4 P2-3: assert that EVERY year-binned trial agrees with production
+    # numerator at the trial level (k_total cannot exceed production_k, and
+    # the gap is bounded by trials-with-no-completion-date).
     assert n_p01_total <= p01_result.n_trials_in_scope
     assert n_p03_total <= p03_result.n_trials_in_scope
-    assert k_p01_total <= int(round(p01_result.magnitude_value * p01_result.n_trials_in_scope))
-    assert k_p03_total <= int(round(p03_result.magnitude_value * p03_result.n_trials_in_scope))
+    p01_k_prod = int(round(p01_result.magnitude_value * p01_result.n_trials_in_scope))
+    p03_k_prod = int(round(p03_result.magnitude_value * p03_result.n_trials_in_scope))
+    assert k_p01_total <= p01_k_prod
+    assert k_p03_total <= p03_k_prod
+    # The drop is exactly the count of NaT-completion-date trials; if it
+    # exceeds 50% something is structurally wrong with the merge.
+    assert n_p01_total >= int(0.5 * p01_result.n_trials_in_scope), (
+        f"year_trajectories dropped >50% of P01 trials "
+        f"({n_p01_total}/{p01_result.n_trials_in_scope}); upstream bug?"
+    )
+    assert n_p03_total >= int(0.5 * p03_result.n_trials_in_scope), (
+        f"year_trajectories dropped >50% of P03 trials "
+        f"({n_p03_total}/{p03_result.n_trials_in_scope}); upstream bug?"
+    )
 
 
 def test_year_trajectories_year_range(fake_aact: Path) -> None:

@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 import sys
+import traceback
 from pathlib import Path
-
-import duckdb
 
 from malaria_ct_recon import aact, schema
 from pilots import (
@@ -37,6 +36,13 @@ def run(
     expected_corpus_min: int = 2000,
     expected_corpus_max: int = 2500,
 ) -> int:
+    """v0.1.4 P1-23: per-pilot try/except so one failure doesn't kill the run.
+
+    Successful pilot results are still written to ``out_path``; failures are
+    logged and the function returns a non-zero (= number of failures) sentinel
+    via stderr. The caller's exit code reflects the number of failures so CI
+    can distinguish "all green" from "9/10 ok plus one transient network blip".
+    """
     pre = preflight.run(snapshot_dir=snapshot_dir, overrides_path=overrides_path,
                         expected_corpus_min=expected_corpus_min,
                         expected_corpus_max=expected_corpus_max)
@@ -44,16 +50,27 @@ def run(
         raise RuntimeError(f"preflight failed: {pre.failure_reason}")
 
     from malaria_ct_recon import corpus as corpus_mod
-    con = aact.open(snapshot_dir)
-    c = corpus_mod.build(con, overrides_path=overrides_path)
 
     results = []
-    for mod in PILOTS:
-        r = mod.run(con=con, corpus=c, aact_snapshot=snapshot_label, seed=seed)
-        results.append(r)
-        print(f"{r.pilot_id} OK: {r.notes}", file=sys.stderr)
+    failures: list[tuple[str, str]] = []
+    with aact.connect(snapshot_dir) as con:
+        c = corpus_mod.build(con, overrides_path=overrides_path)
+        for mod in PILOTS:
+            pilot_id = getattr(mod, "PILOT_ID", mod.__name__)
+            try:
+                r = mod.run(con=con, corpus=c, aact_snapshot=snapshot_label, seed=seed)
+                results.append(r)
+                print(f"{r.pilot_id} OK: {r.notes}", file=sys.stderr)
+            except Exception as exc:  # noqa: BLE001
+                failures.append((pilot_id, repr(exc)))
+                print(f"{pilot_id} FAIL: {exc!r}", file=sys.stderr)
+                traceback.print_exc(file=sys.stderr)
 
-    schema.write(results, out_path)
+    if results:
+        schema.write(results, out_path)
+    if failures:
+        print(f"run_all PARTIAL: {len(results)}/{len(PILOTS)} ok; "
+              f"failures={[f[0] for f in failures]}", file=sys.stderr)
     return len(results)
 
 

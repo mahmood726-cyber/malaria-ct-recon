@@ -28,6 +28,15 @@ _PCR_RX = re.compile(
 _PCR_NEG_RX = re.compile(r"PCR-uncorrected|PCR\s*uncorrected", re.IGNORECASE)
 _VACCINE_RX = re.compile(r"vaccine|RTS,S|R21|PfSPZ|sporozoite|CSP|MSP|AMA1", re.IGNORECASE)
 _PK_RX = re.compile(r"pharmacokinetic|AUC|Cmax|drug concentration", re.IGNORECASE)
+# v0.1.4 P1-9: vector-control / device-combo exclusion for the drug-efficacy
+# filter. Trials combining a DRUG intervention with insecticide-treated nets,
+# IRS, larvicide, etc. typically register an incidence-of-clinical-malaria
+# endpoint where PCR-correction is not the conventional construction.
+_VECTOR_CONTROL_RX = re.compile(
+    r"\bbednet\b|\bITN\b|insecticide|larvicide|"
+    r"indoor\s+residual\s+spraying|\bIRS\b|pyrethroid|piperonyl\s+butoxide",
+    re.IGNORECASE,
+)
 
 
 def _is_pcr_corrected(measure: str) -> bool:
@@ -55,31 +64,21 @@ def run(
     interventions = aact.table(con, "interventions")
     design_outcomes = aact.table(con, "design_outcomes")
 
-    # Step 1: Identify drug-only efficacy trials
-    # Filter interventions to corpus trials
+    # Step 1: Identify drug-only efficacy trials.
+    # v0.1.4 P2-8: rewritten as a single groupby pass to drop the O(n^2)
+    # per-trial DataFrame filter. Same semantics, ~5x faster at 2,277 trials
+    # and avoids the scaling cliff at 10k+ trials.
     in_corpus = interventions[interventions["nct_id"].astype(str).isin(corpus.included)].copy()
-
-    # Group by trial and check: has DRUG intervention AND no vaccine in any intervention name
-    by_trial = in_corpus.groupby("nct_id").agg({
-        "intervention_type": "first",  # for filtering
-        "name": lambda names: names.tolist(),  # collect all names
-    })
-
-    # A trial is drug-efficacy if:
-    # - it has at least one DRUG intervention type
-    # - none of its intervention names match vaccine patterns
-    drug_trials = set()
-    for nct_id in by_trial.index:
-        row = by_trial.loc[nct_id]
+    drug_trials: set[str] = set()
+    for nct_id, group in in_corpus.groupby("nct_id"):
         has_drug = any(
-            str(t).upper() == "DRUG"
-            for t in in_corpus[in_corpus["nct_id"] == nct_id]["intervention_type"].astype(str)
+            str(t).upper() == "DRUG" for t in group["intervention_type"].astype(str)
         )
-        names_list = in_corpus[in_corpus["nct_id"] == nct_id]["name"].astype(str).tolist()
+        names_list = group["name"].astype(str).tolist()
         has_vaccine = any(_VACCINE_RX.search(n) for n in names_list)
-
-        if has_drug and not has_vaccine:
-            drug_trials.add(nct_id)
+        has_vector = any(_VECTOR_CONTROL_RX.search(n) for n in names_list)
+        if has_drug and not has_vaccine and not has_vector:
+            drug_trials.add(str(nct_id))
 
     # Step 2: Find primary outcomes in drug trials
     do = design_outcomes[design_outcomes["nct_id"].astype(str).isin(drug_trials)].copy()

@@ -17,6 +17,15 @@ _VALID_TRACTABILITY = {"full", "partial", "none"}
 
 @dataclass(frozen=True)
 class PilotResult:
+    """Per-pilot result row.
+
+    Fields:
+        seed: Reproducibility witness. Recorded for every pilot even when the
+            pilot is deterministic (P01-P04, P09, P10) — symmetric API across
+            the orchestrator. Only P05 (bootstrap CI) actually consumes it.
+            v0.1.4 P1-21 — kept for API symmetry; documented here as the
+            single source of truth.
+    """
     pilot_id: str
     pilot_title: str
     pilot_type: PilotType
@@ -44,12 +53,32 @@ class PilotResult:
             raise ValueError(f"follow_up_potential must be 1..5, got {self.follow_up_potential}")
 
 
+_CSV_FORMULA_LEAD = ("=", "+", "@", "\t", "\r")
+
+
+def _csv_safe(s: str) -> str:
+    """Prefix a leading apostrophe to cells that Excel would interpret as a formula.
+
+    OWASP CSV-injection mitigation. If a cell value begins with =+@\\t\\r, Excel
+    treats the cell as a formula on open. Prepend `'` to neutralise. v0.1.4
+    P1-28; per lessons.md "CSV formula injection" rule.
+
+    The hyphen `-` is intentionally NOT in the lead set — negative numbers are
+    legitimate cell content, and Excel does not interpret leading `-` as a
+    formula trigger by itself.
+    """
+    if s and s[0] in _CSV_FORMULA_LEAD:
+        return "'" + s
+    return s
+
+
 def _format_value(v: object) -> str:
     """Format a PilotResult field value for CSV serialization.
 
     - float NaN or +/-inf -> empty string (serialised as missing)
     - other floats: repr() if fractional, f"{v:.1f}" if integer-valued
     - dict: JSON with sort_keys=True (reproducible)
+    - str: formula-injection-safe (P1-28)
     - else: str(v)
     """
     if isinstance(v, float):
@@ -57,8 +86,8 @@ def _format_value(v: object) -> str:
             return ""
         return repr(v) if v != int(v) else f"{v:.1f}"
     if isinstance(v, dict):
-        return json.dumps(v, sort_keys=True)
-    return str(v)
+        return _csv_safe(json.dumps(v, sort_keys=True))
+    return _csv_safe(str(v))
 
 
 def write(results: Iterable[PilotResult], out_path: Path | str) -> None:

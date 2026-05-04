@@ -16,6 +16,8 @@ jobs:
       - run: pip install -e .[dev]
       - run: pytest -q
       - name: Install Sentinel
-        run: pip install git+https://github.com/mahmood726-cyber/sentinel.git
+        # v0.1.4 P1-27: pin to explicit commit. Bump intentionally rather than
+        # silently absorbing upstream changes between CI runs.
+        run: pip install git+https://github.com/mahmood726-cyber/sentinel.git@e3eb4f09ed0ac73d85388816992130a35bdfad16
       - name: Sentinel scan (fail on BLOCK)
         run: python -m sentinel scan --repo .

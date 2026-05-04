@@ -3,7 +3,7 @@
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="504pt" height="216pt" viewBox="0 0 504 216" xmlns="http://www.w3.org/2000/svg" version="1.1">
   <title>Compliance trajectories with two reporting requirements among registered malaria trials</title>
-  <desc>Two-panel time series 2004 to 2024. Left panel: FDAAA results-posting (P01) rose from 4.0 percent pre-2017 to 14.5 percent post-2017, with the Final Rule year (2017) marked. Right panel: WHO PCR-correction declaration (P03, strict regex) fell from 8.1 percent pre-2009 to 2.3 percent post-2009, with the WHO 2009 protocol year marked. Both panels use Wilson 95 percent confidence interval ribbons; years with fewer than 10 trials are shown as open circles.</desc>
+  <desc>Two-panel time series 2004 to 2024. Left panel: FDAAA results-posting (P01) rose from 4.0 percent pre-2017 to 14.5 percent post-2017, with the Final Rule year (2017) marked. Right panel: WHO PCR-correction declaration (P03, strict regex) fell from 8.0 percent pre-2009 to 2.4 percent post-2009, with the WHO 2009 protocol year marked. Both panels use Wilson 95 percent confidence interval ribbons; years with fewer than 10 trials are shown as open circles.</desc>
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
@@ -344,16 +344,16 @@ z
     <path d="M 303.588822 -287.740538 
 L 303.588822 164.180413 
 L 313.71246 110.81554 
-L 323.836098 172.128688 
-L 333.959735 121.01038 
+L 323.836098 172.492834 
+L 333.959735 123.174734 
 L 344.083373 130.498888 
 L 354.207011 174.239164 
 L 364.330649 182.64351 
-L 374.454287 149.743101 
+L 374.454287 150.369938 
 L 384.577925 176.390647 
 L 394.701563 165.023312 
 L 404.8252 168.115372 
-L 414.948838 182.64351 
+L 414.948838 177.981811 
 L 425.072476 157.818186 
 L 435.196114 159.695006 
 L 445.319752 175.807299 
@@ -371,16 +371,16 @@ L 455.44339 113.902098
 L 445.319752 -17.589845 
 L 435.196114 -91.394845 
 L 425.072476 -111.333127 
-L 414.948838 84.272129 
+L 414.948838 42.194066 
 L 404.8252 2.377319 
 L 394.701563 -32.902428 
 L 384.577925 -1.881798 
-L 374.454287 -77.092308 
+L 374.454287 -72.570856 
 L 364.330649 -24.173681 
 L 354.207011 -58.670894 
 L 344.083373 -208.767426 
-L 333.959735 -268.929552 
-L 323.836098 -111.458381 
+L 333.959735 -255.467127 
+L 323.836098 -102.547155 
 L 313.71246 -518.640713 
 L 303.588822 -287.740538 
 z
@@ -507,17 +507,17 @@ z
    <g id="line2d_24">
     <path d="M 303.588822 78.86549 
 L 308.919471 -1 
-M 317.418666 -1 
-L 323.836098 123.341784 
-L 333.959735 4.738332 
+M 317.380427 -1 
+L 323.836098 125.386671 
+L 333.959735 10.872994 
 L 344.083373 31.693662 
 L 354.207011 135.202129 
 L 364.330649 182.64351 
-L 374.454287 86.848414 
+L 374.454287 88.655869 
 L 384.577925 147.314822 
 L 394.701563 118.780113 
 L 404.8252 129.930865 
-L 414.948838 182.64351 
+L 414.948838 156.287187 
 L 425.072476 92.889546 
 L 435.196114 99.621094 
 L 445.319752 144.028433 
@@ -530,17 +530,17 @@ L 495.937941 129.080661
     <g clip-path="url(#p718beea7c7)">
      <use xlink:href="#m28470a1b3a" x="303.588822" y="78.86549" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="308.919471" y="-1" style="fill: #1f4e79; stroke: #1f4e79"/>
-     <use xlink:href="#m28470a1b3a" x="317.418666" y="-1" style="fill: #1f4e79; stroke: #1f4e79"/>
-     <use xlink:href="#m28470a1b3a" x="323.836098" y="123.341784" style="fill: #1f4e79; stroke: #1f4e79"/>
-     <use xlink:href="#m28470a1b3a" x="333.959735" y="4.738332" style="fill: #1f4e79; stroke: #1f4e79"/>
+     <use xlink:href="#m28470a1b3a" x="317.380427" y="-1" style="fill: #1f4e79; stroke: #1f4e79"/>
+     <use xlink:href="#m28470a1b3a" x="323.836098" y="125.386671" style="fill: #1f4e79; stroke: #1f4e79"/>
+     <use xlink:href="#m28470a1b3a" x="333.959735" y="10.872994" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="344.083373" y="31.693662" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="354.207011" y="135.202129" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="364.330649" y="182.64351" style="fill: #1f4e79; stroke: #1f4e79"/>
-     <use xlink:href="#m28470a1b3a" x="374.454287" y="86.848414" style="fill: #1f4e79; stroke: #1f4e79"/>
+     <use xlink:href="#m28470a1b3a" x="374.454287" y="88.655869" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="384.577925" y="147.314822" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="394.701563" y="118.780113" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="404.8252" y="129.930865" style="fill: #1f4e79; stroke: #1f4e79"/>
-     <use xlink:href="#m28470a1b3a" x="414.948838" y="182.64351" style="fill: #1f4e79; stroke: #1f4e79"/>
+     <use xlink:href="#m28470a1b3a" x="414.948838" y="156.287187" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="425.072476" y="92.889546" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="435.196114" y="99.621094" style="fill: #1f4e79; stroke: #1f4e79"/>
      <use xlink:href="#m28470a1b3a" x="445.319752" y="144.028433" style="fill: #1f4e79; stroke: #1f4e79"/>
@@ -587,8 +587,8 @@ L 500.99976 16.598677
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #b25c00" x="346.108101" y="27.658772" transform="rotate(-0 346.108101 27.658772)">WHO 2009</text>
    </g>
    <g id="text_29">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(399.763381 47.584152)">Pre-2009: 8.1%</text>
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(399.763381 56.542402)">Post-2009: 2.3%</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(399.763381 47.584152)">Pre-2009: 8.0%</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(399.763381 56.542402)">Post-2009: 2.4%</text>
    </g>
    <g id="text_30">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="394.701562" y="10.598677" transform="rotate(-0 394.701562 10.598677)">WHO PCR-correction declaration (P03)</text>

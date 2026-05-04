@@ -12,6 +12,7 @@ import csv
 import re
 import sys
 import time
+import urllib.parse
 from pathlib import Path
 from typing import Iterable
 
@@ -19,6 +20,12 @@ import requests
 
 CROSSREF_API = "https://api.crossref.org/works/"
 USER_AGENT = "malaria-ct-recon-refs-verifier/0.1 (mailto:mahmood726@gmail.com)"
+
+# v0.1.4 P1-25: DOI shape validation (Crossref convention: 10.<registrant>/<suffix>).
+# Rejects malformed input before it hits the URL builder; closes a latent SSRF
+# / open-redirect surface where a `?cb=evil.com` style suffix could land in the
+# hot path.
+_DOI_VALIDATE_RX = re.compile(r"^10\.\d{4,9}/[\w./()<>:;\-]+$")
 
 
 _ENTRY_RX = re.compile(r"^@(?P<type>\w+)\s*\{\s*(?P<key>[^,]+)\s*,", re.MULTILINE)
@@ -43,8 +50,25 @@ def parse_bibtex(path: Path) -> list[dict]:
 
 
 def resolve_doi(doi: str, *, timeout: float = 10.0) -> tuple[str, int]:
-    r = requests.get(CROSSREF_API + doi, headers={"User-Agent": USER_AGENT}, timeout=timeout)
-    return ("PASS" if r.status_code == 200 else "FAIL"), int(r.status_code)
+    """Resolve a DOI via Crossref. v0.1.4 P1-25 hardening.
+
+    Validates the DOI shape, percent-encodes the suffix, and rejects 200
+    responses that aren't JSON (Cloudflare-style HTML error pages return 200).
+    """
+    if not _DOI_VALIDATE_RX.match(doi):
+        return "INVALID", 0
+    encoded = urllib.parse.quote(doi, safe="/")
+    r = requests.get(
+        CROSSREF_API + encoded,
+        headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+        timeout=timeout,
+    )
+    if r.status_code != 200:
+        return "FAIL", int(r.status_code)
+    ct = (r.headers.get("content-type") or "").split(";", 1)[0].strip().lower()
+    if ct != "application/json":
+        return "BAD_CONTENT_TYPE", int(r.status_code)
+    return "PASS", int(r.status_code)
 
 
 def verify(bib_path: Path, out_csv: Path, *, sleep_s: float = 0.2) -> int:
@@ -63,7 +87,7 @@ def verify(bib_path: Path, out_csv: Path, *, sleep_s: float = 0.2) -> int:
             except requests.RequestException as e:
                 status, code = "ERROR", -1
                 print(f"  WARN: {r['bibkey']} request error: {e}", file=sys.stderr)
-            if status == "FAIL":
+            if status in ("FAIL", "INVALID", "BAD_CONTENT_TYPE"):
                 any_fail = True
             w.writerow({**r, "status": status, "http_code": code})
             time.sleep(sleep_s)

@@ -118,6 +118,48 @@ def make(csv_path: Path, out_png: Path, out_svg: Path) -> None:
     fig.savefig(out_svg, metadata={"Date": None})
     plt.close(fig)
 
+    # v0.1.4 P1-11: inject WCAG 2.1 SC 1.1.1 text alternatives into the SVG.
+    _inject_svg_a11y(
+        out_svg,
+        title="Compliance trajectories with two reporting requirements among "
+              "registered malaria trials",
+        desc=(
+            "Two-panel time series 2004 to 2024. Left panel: FDAAA "
+            f"results-posting (P01) rose from {p01_pre*100:.1f} percent "
+            f"pre-2017 to {p01_post*100:.1f} percent post-2017, with "
+            "the Final Rule year (2017) marked. Right panel: WHO "
+            f"PCR-correction declaration (P03, strict regex) fell from "
+            f"{p03_pre*100:.1f} percent pre-2009 to {p03_post*100:.1f} "
+            "percent post-2009, with the WHO 2009 protocol year marked. "
+            "Both panels use Wilson 95 percent confidence interval ribbons; "
+            "years with fewer than 10 trials are shown as open circles."
+        ),
+    )
+
+
+def _inject_svg_a11y(svg_path: Path, *, title: str, desc: str) -> None:
+    """Inject <title> and <desc> immediately after the root <svg> element.
+
+    matplotlib does not emit these by default; without them screen readers
+    announce the figure as "graphic" with no semantic content. Idempotent —
+    if a <title> already exists, this is a no-op.
+    """
+    s = svg_path.read_text(encoding="utf-8")
+    if "<title>" in s.split("</svg>")[0]:
+        return
+    # Find end of opening <svg ...> tag
+    open_tag_end = s.find(">", s.find("<svg"))
+    if open_tag_end < 0:
+        return
+    insert = f"\n  <title>{_xml_escape(title)}</title>\n  <desc>{_xml_escape(desc)}</desc>"
+    s = s[: open_tag_end + 1] + insert + s[open_tag_end + 1 :]
+    svg_path.write_text(s, encoding="utf-8")
+
+
+def _xml_escape(s: str) -> str:
+    return (s.replace("&", "&amp;").replace("<", "&lt;")
+             .replace(">", "&gt;").replace('"', "&quot;"))
+
 
 def main() -> int:
     csv = Path("pilots/results/year_trajectories.csv")

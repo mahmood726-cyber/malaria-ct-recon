@@ -39,13 +39,32 @@ class Corpus:
 
 
 def _load_overrides(path: Path) -> tuple[set[str], set[str]]:
+    """Read corpus_overrides.csv. v0.1.4 P2-10: validate audit-trail columns.
+
+    Required columns: nct_id, action. If reason / added_by columns are present
+    in the schema, non-empty values are required so the override leaves a
+    discoverable audit trail.
+    """
     if not path.exists():
         return set(), set()
     inc, exc = set(), set()
     with path.open(encoding="utf-8") as fh:
-        for row in csv.DictReader(fh):
+        reader = csv.DictReader(fh)
+        has_reason = reader.fieldnames is not None and "reason" in reader.fieldnames
+        has_added_by = reader.fieldnames is not None and "added_by" in reader.fieldnames
+        for row in reader:
             nct = row["nct_id"].strip()
             action = row["action"].strip().lower()
+            if has_reason and not row.get("reason", "").strip():
+                raise ValueError(
+                    f"override for {nct} has empty `reason`; "
+                    "audit trail required (v0.1.4 P2-10)"
+                )
+            if has_added_by and not row.get("added_by", "").strip():
+                raise ValueError(
+                    f"override for {nct} has empty `added_by`; "
+                    "audit trail required (v0.1.4 P2-10)"
+                )
             if action == "exclude":
                 exc.add(nct)
             elif action == "include":

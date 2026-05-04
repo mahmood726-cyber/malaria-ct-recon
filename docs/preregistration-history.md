@@ -79,3 +79,29 @@ The divergence is not silent: the spec is OTS-anchored and immutable; this
 file is the registered amendment. The framework HEAD `26a3fb0` is unchanged,
 so the spec-vs-implementation reconciliation can be audited from the git
 log alone.
+
+## v0.1.4 divergences (2026-05-04)
+
+Two further filter refinements landed in v0.1.4, both flagged by the
+multi-persona review (P1-5, P1-9):
+
+- **§4 indication exclude list** (`pilots/p03_sensitivity_uncomplicated_falciparum.py`):
+  added Seasonal Malaria Chemoprevention (SMC), IPTi (infants), IPTsc
+  (school-children), PMC (Perennial Malaria Chemoprevention — the 2022 WHO
+  rename of IPTi). Effect on the sensitivity subset: pre-2009 was 5/27 →
+  5/26 (one SMC trial dropped); post-2009 was 9/136 → 9/136 (no change).
+  Direction unchanged; Fisher p shifted 0.06 → 0.05.
+
+- **Drug-efficacy filter** (`pilots/p03_pcr_corrected.py`): drug+device
+  combinations (insecticide-treated nets, IRS, larvicide, pyrethroid, PBO)
+  excluded. Removes ~6 trials whose primary endpoint is incidence-of-clinical-
+  malaria, where PCR-correction is not the conventional outcome construction.
+  Effect on the headline P03 denominator: 1,276 → 1,270 (drop of 6).
+  P03 strict rate: 36/1276 (2.82%) → 35/1270 (2.76%). Pre/post WHO 2009:
+  pre 7/88 (8.0%) → 7/86 (8.1%); post 23/943 (2.4%) → 22/940 (2.3%).
+  Fisher p improved 0.010 → 0.008. Direction unchanged.
+
+Both changes preserve the v0.1.3 thesis (FDAAA enforcement vs. WHO-norm
+trajectories diverge) and strengthen the P03 inference. Spec OTS anchor
+unchanged; framework HEAD `26a3fb0` unchanged; the changes are bounded to
+filter regexes and live as registered amendments here.

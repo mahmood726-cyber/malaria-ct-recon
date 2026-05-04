@@ -22,26 +22,44 @@ def test_parse_bibtex_extracts_doi(tmp_path: Path):
 
 
 class _StubResp:
-    def __init__(self, status):
+    def __init__(self, status, content_type="application/json"):
         self.status_code = status
+        self.headers = {"content-type": content_type}
     def json(self):
         return {"message": {}}
 
 
+# v0.1.4 P1-25: tests use DOI shapes that satisfy the registrant regex.
+_VALID_DOI = "10.1234/abc"
+
+
 def test_resolve_doi_passes_on_200(monkeypatch):
     monkeypatch.setattr(vr.requests, "get", lambda *a, **k: _StubResp(200))
-    assert vr.resolve_doi("10.X/Y") == ("PASS", 200)
+    assert vr.resolve_doi(_VALID_DOI) == ("PASS", 200)
 
 
 def test_resolve_doi_fails_on_404(monkeypatch):
     monkeypatch.setattr(vr.requests, "get", lambda *a, **k: _StubResp(404))
-    assert vr.resolve_doi("10.X/Y") == ("FAIL", 404)
+    assert vr.resolve_doi(_VALID_DOI) == ("FAIL", 404)
+
+
+def test_resolve_doi_invalid_shape_fails_closed():
+    """v0.1.4 P1-25: malformed DOIs are rejected before HTTP."""
+    assert vr.resolve_doi("not-a-doi")[0] == "INVALID"
+    assert vr.resolve_doi("../../etc/passwd")[0] == "INVALID"
+
+
+def test_resolve_doi_html_200_is_not_pass(monkeypatch):
+    """v0.1.4 P1-25: 200 with HTML body (Cloudflare-style) must not pass."""
+    monkeypatch.setattr(vr.requests, "get",
+                        lambda *a, **k: _StubResp(200, content_type="text/html"))
+    assert vr.resolve_doi(_VALID_DOI) == ("BAD_CONTENT_TYPE", 200)
 
 
 def test_verify_emits_csv(tmp_path: Path, monkeypatch):
     bib = tmp_path / "x.bib"
     bib.write_text(
-        '@article{a,\n  doi = {10.1/A}\n}\n'
+        f'@article{{a,\n  doi = {{{_VALID_DOI}}}\n}}\n'
         '@techreport{b,\n  year = {2008}\n}\n',
         encoding="utf-8",
     )

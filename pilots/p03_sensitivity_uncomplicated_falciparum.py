@@ -22,9 +22,16 @@ from malaria_ct_recon.corpus import Corpus
 from pilots import p01_p03_year_trajectories as yt
 
 _INCLUDE_RX = re.compile(r"\b(falciparum|uncomplicated\s+malaria)\b", re.IGNORECASE)
+# v0.1.4 P1-5: harmonised exclude list. Added the chemoprevention modalities
+# that are themselves the post-2008 portfolio shift — Seasonal Malaria
+# Chemoprevention (SMC), IPTi (infants) / IPTsc (school children), and the
+# 2022-renamed PMC (Perennial Malaria Chemoprevention). Without these, the
+# §4 "uncomplicated falciparum" subset still includes preventive trials
+# whose primary endpoint is incidence, not ACPR.
 _EXCLUDE_RX = re.compile(
     r"\b(severe|complicated|vivax-only|ovale-only|malariae-only|"
-    r"prevention|chemoprevention|mda|iptp|vaccine)\b",
+    r"prevention|chemoprevention|mda|iptp|ipti|iptsc|smc|pmc|"
+    r"seasonal\s+malaria\s+chemoprevention|vaccine)\b",
     re.IGNORECASE,
 )
 

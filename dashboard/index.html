@@ -4,33 +4,73 @@
 <meta charset="utf-8">
 <title>Malaria CT.gov Reconnaissance &mdash; Signal Table</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- v0.1.4 P2-13: defence-in-depth Content-Security-Policy. No external CDN
+     loads from this page; only inline styles + a same-origin CSV fetch. -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'">
 <style>
   body { font-family: -apple-system, system-ui, Segoe UI, sans-serif; max-width: 1100px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
   h1 { margin-bottom: 0.2rem; }
   .meta { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
   table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  caption { caption-side: top; text-align: left; padding: 0 0 0.5rem 0; font-weight: 600; color: #333; }
   th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #ddd; vertical-align: top; }
   th { background: #f4f4f4; cursor: pointer; user-select: none; }
+  th:focus { outline: 2px solid #1f4e79; outline-offset: -2px; }
   th.sorted-asc::after { content: " \25B2"; }
   th.sorted-desc::after { content: " \25BC"; }
-  .magnitude-bar { display: inline-block; height: 0.7em; background: #4a90e2; vertical-align: middle; margin-right: 6px; }
-  .ci { color: #888; font-size: 0.85em; }
+  .magnitude-bar { display: inline-block; height: 0.7em; background: #1f4e79; vertical-align: middle; margin-right: 6px; }
+  .ci { color: #666; font-size: 0.85em; }
   .probe { background: #fff8e1; }
   .followup { font-weight: 600; }
   .pilot-id { font-family: monospace; }
   details { margin-top: 1.2rem; }
-  summary { cursor: pointer; color: #4a90e2; }
+  summary { cursor: pointer; color: #1f4e79; }
+  figure { margin: 1.5rem 0; }
+  figure img { max-width: 100%; height: auto; display: block; }
+  figcaption { font-size: 0.9rem; color: #555; margin-top: 0.4rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 </style>
 </head>
 <body>
-<h1>Malaria CT.gov Reconnaissance &mdash; Signal Table</h1>
-<p class="meta" id="meta">Loading...</p>
-<table id="signal-table"><thead></thead><tbody></tbody></table>
-<details>
-  <summary>About</summary>
-  <p>This table is the output of the <code>malaria-ct-recon</code> sprint. 10 pilots over the AACT 2026-04-12 snapshot, each quantifying one source of bias in malaria CT.gov data.</p>
-  <p>Spec + plan + source code: <a href="https://github.com/mahmood726-cyber/malaria-ct-recon">github.com/mahmood726-cyber/malaria-ct-recon</a></p>
-</details>
+<a href="#main" class="sr-only">Skip to main content</a>
+<header>
+  <h1>Malaria CT.gov Reconnaissance &mdash; Signal Table</h1>
+  <p class="meta" id="meta">Loading&hellip;</p>
+</header>
+<main id="main">
+  <figure>
+    <a href="figure-d.png">
+      <img src="figure-d.png"
+           alt="Two-panel time series 2004-2024 showing FDAAA results-posting compliance rising from 4 percent pre-2017 to 14.5 percent post-2017 in the left panel, and WHO PCR-correction declaration falling from 8 percent pre-2009 to 2.4 percent post-2009 in the right panel.">
+    </a>
+    <figcaption>
+      <strong>Figure 1.</strong> Compliance trajectories with two reporting requirements among registered malaria trials (n = 2,277, AACT 2026-04-12).
+      <strong>Left:</strong> results-posting within 12 months of primary completion (P01); FDAAA Final Rule (2017) marked.
+      <strong>Right:</strong> PCR-correction declaration in primary outcome (P03, strict regex); WHO 2009 marked.
+      Differing y-axes. Ribbons: pointwise Wilson 95&nbsp;% CIs; n &lt; 10 shown as open circles.
+    </figcaption>
+  </figure>
+  <table id="signal-table">
+    <caption class="sr-only">10-pilot signal table from the AACT 2026-04-12 snapshot. Sortable by clicking a column header (or pressing Enter / Space when focused).</caption>
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+  <noscript>
+    <p style="color:#a00; padding:0.6rem; border:1px solid #a00; background:#fff5f5;">
+      JavaScript is disabled. The signal table renders client-side; you can still
+      view the raw data at <a href="data/signal-table.csv">data/signal-table.csv</a>.
+    </p>
+  </noscript>
+</main>
+<footer>
+  <details>
+    <summary>About this dashboard</summary>
+    <p>This table is the output of the <code>malaria-ct-recon</code> sprint. 10 pilots over the AACT 2026-04-12 snapshot, each quantifying one source of bias in malaria CT.gov data.</p>
+    <p>Spec, plan, and source code: <a href="https://github.com/mahmood726-cyber/malaria-ct-recon">github.com/mahmood726-cyber/malaria-ct-recon</a></p>
+    <p>Latest release: <a href="https://github.com/mahmood726-cyber/malaria-ct-recon/releases/latest">v0.1.4</a> &middot; Methods Note paper: <a href="https://github.com/mahmood726-cyber/malaria-ct-recon/releases/latest/download/methods-note-draft.docx">.docx download</a></p>
+  </details>
+</footer>
 <script>
 async function main() {
   const resp = await fetch("data/signal-table.csv");
@@ -70,9 +110,16 @@ function render(rows) {
     {key: "notes", label: "Notes"},
   ];
   const thead = document.querySelector("#signal-table thead");
-  thead.innerHTML = "<tr>" + cols.map(c => `<th data-key="${c.key}">${c.label}</th>`).join("") + "</tr>";
+  // v0.1.4 P1-14: keyboard-accessible sort headers (tabindex + role + aria-sort + Enter/Space binding)
+  thead.innerHTML = "<tr>" + cols.map(c =>
+    `<th scope="col" data-key="${c.key}" tabindex="0" role="button" aria-sort="none">${c.label}</th>`
+  ).join("") + "</tr>";
   thead.querySelectorAll("th").forEach((th, i) => {
-    th.addEventListener("click", () => sortBy(rows, cols[i].key));
+    const handler = () => sortBy(rows, cols[i].key);
+    th.addEventListener("click", handler);
+    th.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handler(); }
+    });
   });
   drawBody(rows);
 }
@@ -84,8 +131,15 @@ function sortBy(rows, key) {
     const bv = isFinite(parseFloat(b[key])) ? parseFloat(b[key]) : b[key];
     return (av > bv ? 1 : av < bv ? -1 : 0) * (sortAsc ? 1 : -1);
   });
-  document.querySelectorAll("th").forEach(th => th.classList.remove("sorted-asc", "sorted-desc"));
-  document.querySelector(`th[data-key="${key}"]`)?.classList.add(sortAsc ? "sorted-asc" : "sorted-desc");
+  document.querySelectorAll("th").forEach(th => {
+    th.classList.remove("sorted-asc", "sorted-desc");
+    th.setAttribute("aria-sort", "none");
+  });
+  const active = document.querySelector(`th[data-key="${key}"]`);
+  if (active) {
+    active.classList.add(sortAsc ? "sorted-asc" : "sorted-desc");
+    active.setAttribute("aria-sort", sortAsc ? "ascending" : "descending");
+  }
   drawBody(rows);
 }
 function drawBody(rows) {
@@ -98,7 +152,7 @@ function drawBody(rows) {
     const lo = parseFloat(r.magnitude_ci_low);
     const hi = parseFloat(r.magnitude_ci_high);
     const magCell = isFinite(mag)
-      ? `<span class="magnitude-bar" style="width:${Math.min(mag*120, 120).toFixed(1)}px"></span>${mag.toFixed(3)} <span class="ci">[${lo.toFixed(3)}, ${hi.toFixed(3)}]</span>`
+      ? `<span class="magnitude-bar" style="width:${Math.min(mag*120, 120).toFixed(1)}px" aria-hidden="true"></span>${mag.toFixed(3)} <span class="ci">[${lo.toFixed(3)}, ${hi.toFixed(3)}]</span>`
       : `<em class="ci">&mdash; (probe)</em>`;
     const cells = [
       `<td class="pilot-id">${escapeHtml(r.pilot_id)}</td>`,

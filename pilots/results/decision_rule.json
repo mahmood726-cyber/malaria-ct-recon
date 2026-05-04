@@ -1,11 +1,11 @@
 {
   "band": "attenuates",
   "body_sentence": "within the uncomplicated-falciparum subset the same direction holds but the small pre-mandate sample renders the within-subset trend inconclusive.",
-  "delta_pp": -11.900871459694988,
+  "delta_pp": -12.613122171945701,
   "mandate_year": 2009,
-  "notes": "small pre-mandate sample (n=27 < 50); decision rule defaulted to 'attenuates' as the conservative interpretation.",
+  "notes": "small pre-mandate sample (n=26 < 50); decision rule defaulted to 'attenuates' as the conservative interpretation.",
   "post_n": 136,
   "post_rate": 0.0661764705882353,
-  "pre_n": 27,
-  "pre_rate": 0.18518518518518517
+  "pre_n": 26,
+  "pre_rate": 0.19230769230769232
 }

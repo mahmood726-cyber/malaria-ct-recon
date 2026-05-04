@@ -28,7 +28,13 @@ def bootstrap_ci(
     alpha: float = 0.05,
     seed: int | None = None,
 ) -> tuple[float, float]:
-    """Percentile bootstrap CI for an arbitrary statistic."""
+    """Percentile bootstrap CI for an arbitrary statistic.
+
+    Uses the percentile method, which is appropriate for symmetric statistics
+    on moderately-sized samples. For highly skewed estimands or proportions
+    near 0 / 1, prefer ``wilson_ci`` (proportions) or a BCa variant — the
+    percentile bootstrap can have asymmetric coverage gaps in those regimes.
+    """
     rng = np.random.default_rng(seed)
     n = len(data)
     if n == 0:
