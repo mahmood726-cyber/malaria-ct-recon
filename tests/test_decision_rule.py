@@ -16,10 +16,11 @@ def test_persists_branch():
 
 
 def test_attenuates_branch():
-    """-2 < Δ < 0 ⇒ softens."""
+    """-2 < Δ < 0 ⇒ softens. v0.1.3: sentence rewritten to drop unsupported persistence claim."""
     out = dr.apply(pre_rate=0.040, post_rate=0.030, pre_n=50, post_n=400)
     assert out["band"] == "attenuates"
-    assert "partially attributable" in out["body_sentence"]
+    assert "inconclusive" in out["body_sentence"]
+    assert "small pre-mandate sample" in out["body_sentence"]
 
 
 def test_disappears_branch():

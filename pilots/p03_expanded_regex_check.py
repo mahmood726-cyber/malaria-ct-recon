@@ -26,7 +26,10 @@ _PCR_EXPANDED_RX = re.compile(
     r"PCR-corrected|PCR\s*adjusted|PCR-adjusted|genotypically.corrected|"
     r"genotype-corrected|molecularly.corrected|"
     r"PCR-confirmed|PCR\s*confirmed|PCR-distinguished|"
-    r"genotyping-corrected|parasitologically.corrected",
+    r"genotyping-corrected|parasitologically.corrected|"
+    r"\bACPR\b|adequate\s+clinical\s+and\s+parasitological\s+response|"
+    r"recrudescence.{0,30}reinfection|protocol-defined\s+recrudescence|"
+    r"\bmsp[12]\s+genotyping\b|\bglurp\s+genotyping\b",
     re.IGNORECASE,
 )
 _PCR_NEG_RX = re.compile(r"PCR-uncorrected|PCR\s*uncorrected", re.IGNORECASE)

@@ -1,11 +1,11 @@
 {
   "band": "attenuates",
-  "body_sentence": "the decline is partially attributable to portfolio shift but persists within the uncomplicated-falciparum subset.",
-  "delta_pp": -12.005365526492286,
-  "mandate_year": 2008,
-  "notes": "small pre-mandate sample (n=21 < 50); decision rule defaulted to 'attenuates' as the conservative interpretation.",
-  "post_n": 142,
-  "post_rate": 0.07042253521126761,
-  "pre_n": 21,
-  "pre_rate": 0.19047619047619047
+  "body_sentence": "within the uncomplicated-falciparum subset the same direction holds but the small pre-mandate sample renders the within-subset trend inconclusive.",
+  "delta_pp": -11.900871459694988,
+  "mandate_year": 2009,
+  "notes": "small pre-mandate sample (n=27 < 50); decision rule defaulted to 'attenuates' as the conservative interpretation.",
+  "post_n": 136,
+  "post_rate": 0.0661764705882353,
+  "pre_n": 27,
+  "pre_rate": 0.18518518518518517
 }

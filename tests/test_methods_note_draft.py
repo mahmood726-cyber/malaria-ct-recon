@@ -88,7 +88,9 @@ def test_headline_numbers_match_production_csvs():
     p03_pct = round(float(p03["magnitude_value"]) * 100, 1)
     p01_n = int(p01["n_trials_in_scope"])
     p03_n = int(p03["n_trials_in_scope"])
-    assert f"{p01_pct} %" in md or f"{p01_pct}%" in md, f"P01 headline {p01_pct}% not in draft"
-    assert f"{p03_pct} %" in md or f"{p03_pct}%" in md, f"P03 headline {p03_pct}% not in draft"
+    # Accept ASCII space, NBSP (U+00A0), or no space between number and %.
+    pct_variants = lambda v: (f"{v} %", f"{v} %", f"{v}%")
+    assert any(s in md for s in pct_variants(p01_pct)), f"P01 headline {p01_pct}% not in draft"
+    assert any(s in md for s in pct_variants(p03_pct)), f"P03 headline {p03_pct}% not in draft"
     assert f"{p01_n:,}" in md or str(p01_n) in md, f"P01 n={p01_n} not in draft"
     assert f"{p03_n:,}" in md or str(p03_n) in md, f"P03 n={p03_n} not in draft"

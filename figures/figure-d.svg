@@ -277,20 +277,20 @@ z
     <path d="M 41.465184 182.64351 
 " clip-path="url(#pf16d7f4deb)" style="fill: none; stroke: #1f4e79; stroke-opacity: 0.5; stroke-width: 0.7; stroke-linecap: square"/>
     <defs>
-     <path id="mfb26ebc5ef" d="M 0 1.5 
-C 0.397805 1.5 0.77937 1.341951 1.06066 1.06066 
-C 1.341951 0.77937 1.5 0.397805 1.5 0 
-C 1.5 -0.397805 1.341951 -0.77937 1.06066 -1.06066 
-C 0.77937 -1.341951 0.397805 -1.5 0 -1.5 
-C -0.397805 -1.5 -0.77937 -1.341951 -1.06066 -1.06066 
-C -1.341951 -0.77937 -1.5 -0.397805 -1.5 0 
-C -1.5 0.397805 -1.341951 0.77937 -1.06066 1.06066 
-C -0.77937 1.341951 -0.397805 1.5 0 1.5 
+     <path id="mfff2689af4" d="M 0 2 
+C 0.530406 2 1.03916 1.789267 1.414214 1.414214 
+C 1.789267 1.03916 2 0.530406 2 0 
+C 2 -0.530406 1.789267 -1.03916 1.414214 -1.414214 
+C 1.03916 -1.789267 0.530406 -2 0 -2 
+C -0.530406 -2 -1.03916 -1.789267 -1.414214 -1.414214 
+C -1.789267 -1.03916 -2 -0.530406 -2 0 
+C -2 0.530406 -1.789267 1.03916 -1.414214 1.414214 
+C -1.03916 1.789267 -0.530406 2 0 2 
 z
 " style="stroke: #1f4e79; stroke-opacity: 0.5"/>
     </defs>
     <g clip-path="url(#pf16d7f4deb)">
-     <use xlink:href="#mfb26ebc5ef" x="41.465184" y="182.64351" style="fill: #1f4e79; fill-opacity: 0.5; stroke: #1f4e79; stroke-opacity: 0.5"/>
+     <use xlink:href="#mfff2689af4" x="41.465184" y="182.64351" style="fill: #ffffff; fill-opacity: 0.5; stroke: #1f4e79; stroke-opacity: 0.5"/>
     </g>
    </g>
    <g id="line2d_13">
@@ -319,11 +319,11 @@ L 248.99976 16.598677
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_13">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #b25c00" x="175.097204" y="29.882264" transform="rotate(-0 175.097204 29.882264)">Final Rule</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #b25c00" x="175.097204" y="27.658772" transform="rotate(-0 175.097204 27.658772)">Final Rule</text>
    </g>
    <g id="text_14">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(44.502275 20.924014)">Pre-2017: 4.0%</text>
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(44.502275 29.882264)">Post-2017: 14.5%</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(44.502275 35.961014)">Pre-2017: 4.0%</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(44.502275 44.919264)">Post-2017: 14.5%</text>
    </g>
    <g id="text_15">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="142.701562" y="10.598677" transform="rotate(-0 142.701562 10.598677)">FDAAA results-posting (P01)</text>
@@ -553,12 +553,12 @@ L 495.937941 129.080661
     <path d="M 293.465184 182.64351 
 " clip-path="url(#p718beea7c7)" style="fill: none; stroke: #1f4e79; stroke-opacity: 0.5; stroke-width: 0.7; stroke-linecap: square"/>
     <g clip-path="url(#p718beea7c7)">
-     <use xlink:href="#mfb26ebc5ef" x="293.465184" y="182.64351" style="fill: #1f4e79; fill-opacity: 0.5; stroke: #1f4e79; stroke-opacity: 0.5"/>
+     <use xlink:href="#mfff2689af4" x="293.465184" y="182.64351" style="fill: #ffffff; fill-opacity: 0.5; stroke: #1f4e79; stroke-opacity: 0.5"/>
     </g>
    </g>
    <g id="line2d_26">
-    <path d="M 333.959735 182.64351 
-L 333.959735 16.598677 
+    <path d="M 344.083373 182.64351 
+L 344.083373 16.598677 
 " clip-path="url(#p718beea7c7)" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #b25c00"/>
    </g>
    <g id="patch_8">
@@ -582,11 +582,11 @@ L 500.99976 16.598677
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_28">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #b25c00" x="335.984463" y="29.882264" transform="rotate(-0 335.984463 29.882264)">WHO 2008</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #b25c00" x="346.108101" y="27.658772" transform="rotate(-0 346.108101 27.658772)">WHO 2009</text>
    </g>
    <g id="text_29">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(296.502275 20.924014)">Pre-2008: 6.8%</text>
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(296.502275 29.882264)">Post-2008: 2.7%</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(399.763381 47.584152)">Pre-2009: 8.0%</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(399.763381 56.542402)">Post-2009: 2.4%</text>
    </g>
    <g id="text_30">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="394.701562" y="10.598677" transform="rotate(-0 394.701562 10.598677)">WHO PCR-correction declaration (P03)</text>

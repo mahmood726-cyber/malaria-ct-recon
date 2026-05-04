@@ -19,14 +19,16 @@ PERSIST_SENTENCE = (
     "the uncomplicated-falciparum subset where PCR-correction is unambiguously relevant."
 )
 ATTENUATE_SENTENCE = (
-    "the decline is partially attributable to portfolio shift but persists within "
-    "the uncomplicated-falciparum subset."
+    "within the uncomplicated-falciparum subset the same direction holds but the "
+    "small pre-mandate sample renders the within-subset trend inconclusive."
 )
 # Note: spec §4 originally said "flat at ~5% throughout"; we drop the speculative
 # "~5%" because the body_sentence is consumed verbatim by T12, and a hardcoded
 # rate would contradict Figure D if DISAPPEAR ever fires with a different rate.
 # DISAPPEAR did not fire on the AACT 2026-04-12 data (band=attenuates), so this
 # is currently moot, but the documented divergence preserves the integrity claim.
+# v0.1.3: ATTENUATE_SENTENCE rewritten to drop the unsupported "persists" claim
+# (Fisher p=0.06 in the n_pre=27 subset; CIs overlap). See review-findings.md P0-3.
 DISAPPEAR_SENTENCE = (
     "the apparent decline is largely explained by portfolio shift; within indications "
     "where PCR-correction applies, compliance has been flat throughout."
@@ -85,13 +87,16 @@ def apply(*, pre_rate: float, post_rate: float, pre_n: int, post_n: int) -> dict
     }
 
 
-def from_csv(csv_path: Path, out_path: Path, mandate_year: int = 2008) -> dict:
+def from_csv(csv_path: Path, out_path: Path, mandate_year: int = 2009) -> dict:
     """Read the sensitivity CSV and apply the decision rule.
 
     Args:
         csv_path: path to the sensitivity CSV.
         out_path: path to write the decision JSON.
-        mandate_year: the year the mandate took effect (default 2008).
+        mandate_year: the year the mandate took effect (default 2009 — WHO
+            *Methods for Surveillance of Antimalarial Drug Efficacy*; this
+            replaces the OTS-anchored §4 spec value of 2008. Divergence
+            documented in outputs/extraction_audit.md.
 
     Returns:
         The decision rule payload dict.
@@ -120,7 +125,7 @@ def main() -> int:
     payload = from_csv(
         Path("pilots/results/p03_sensitivity.csv"),
         Path("pilots/results/decision_rule.json"),
-        mandate_year=2008,
+        mandate_year=2009,
     )
     print(f"decision_rule OK: band={payload['band']}, delta={payload['delta_pp']:+.2f}pp")
     return 0

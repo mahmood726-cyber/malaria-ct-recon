@@ -47,3 +47,35 @@ pre-data estimate.
 A re-run on the original (narrow) criteria would confirm the trajectories'
 robustness; this is logged here as a follow-up rather than blocking the
 v0.1.2 ship.
+
+## v0.1.3 divergence: WHO mandate year 2008 → 2009
+
+The OTS-anchored design spec (`docs/superpowers/specs/2026-05-03-methods-paper-design.md`,
+commit `535fa2e`, Bitcoin block 947705) specified the WHO mandate cutoff as
+2008. A multi-persona review on 2026-05-04 (`review-findings.md`) flagged
+that the 2008 WHO document is a technical genotyping monograph, not the
+operational protocol.
+
+For v0.1.3, the cutoff was moved to **2009** — the year of WHO's *Methods
+for Surveillance of Antimalarial Drug Efficacy*, the operational protocol
+that updated the 2003 ACPR/PCR-correction methodology. Effects of the move:
+
+- Pre-mandate baseline: 2008 cutoff gave n=67 (Fisher p=0.12, not
+  significant); 2009 cutoff gives n=96 (Fisher p=0.016, significant). The
+  2009 split is both bibliographically and statistically defensible.
+- Within-subset (uncomplicated falciparum) sensitivity: 2008 had n_pre=21
+  → 19.0%/7.0% with p=0.086; 2009 has n_pre=27 → 18.5%/6.6% with p=0.059.
+  Both fall under the §4 small-n safety net (`pre_n < 50`); the locked
+  body sentence retains the "attenuates" branch but its text was rewritten
+  to drop the unsupported "persists" claim (see `pilots/p03_decision_rule.py`
+  v0.1.3 history).
+- B3 broad-regex variant: a separate review finding (P0-2) added ACPR,
+  recrudescence-vs-reinfection, msp1/msp2/glurp genotyping patterns to the
+  expanded check (`pilots/p03_expanded_regex_check.py`). This is **not** in
+  the production P03 pilot — the headline 2.8% remains the strict-syntactic
+  measurement. The broad-regex 7.5% is reported as an upper bound.
+
+The divergence is not silent: the spec is OTS-anchored and immutable; this
+file is the registered amendment. The framework HEAD `26a3fb0` is unchanged,
+so the spec-vs-implementation reconciliation can be audited from the git
+log alone.

@@ -36,7 +36,8 @@ def _wilson(k: int, n: int, alpha: float = 0.05) -> tuple[float, float]:
     return max(0.0, centre - half), min(1.0, centre + half)
 
 
-def _panel(ax, years, n, k, rate, mandate_year, mandate_label, ann_text, y_max, title):
+def _panel(ax, years, n, k, rate, mandate_year, mandate_label, ann_text, y_max, title,
+           ann_xy=None):
     ci = [_wilson(int(ki), int(ni)) for ki, ni in zip(k, n)]
     lo = np.array([c[0] for c in ci])
     hi = np.array([c[1] for c in ci])
@@ -45,15 +46,21 @@ def _panel(ax, years, n, k, rate, mandate_year, mandate_label, ann_text, y_max, 
 
     ax.fill_between(years[strong], lo[strong] * 100, hi[strong] * 100,
                     alpha=0.25, color="#377eb8", linewidth=0)
-    ax.plot(years[strong], rate[strong] * 100, marker="o", color="#1f4e79", linewidth=1.6, markersize=4)
+    ax.plot(years[strong], rate[strong] * 100, marker="o", color="#1f4e79",
+            linewidth=1.6, markersize=4, label="n ≥ 10")
     if weak.any():
         ax.fill_between(years[weak], lo[weak] * 100, hi[weak] * 100,
                         alpha=0.10, color="#377eb8", linewidth=0)
         ax.plot(years[weak], rate[weak] * 100, marker="o", color="#1f4e79",
-                linewidth=0.7, markersize=3, alpha=0.5)
+                linewidth=0.7, markersize=4, alpha=0.5,
+                markerfacecolor="white", markeredgecolor="#1f4e79",
+                markeredgewidth=1.0, label="n < 10")
     ax.axvline(mandate_year, linestyle="--", color="#b25c00", linewidth=1.0)
-    ax.text(mandate_year + 0.2, y_max * 0.92, mandate_label, fontsize=8, color="#b25c00")
-    ax.text(2004.3, y_max * 0.92, ann_text, fontsize=8)
+    ax.text(mandate_year + 0.2, y_max * 0.97, mandate_label, fontsize=8,
+            color="#b25c00", verticalalignment="top")
+    ann_x, ann_y_frac = ann_xy if ann_xy is not None else (2004.3, 0.92)
+    ax.text(ann_x, y_max * ann_y_frac, ann_text, fontsize=8,
+            verticalalignment="top")
     ax.set_xlim(2003.5, 2024.5)
     ax.set_ylim(0, y_max)
     ax.set_xlabel("Primary completion year")
@@ -77,7 +84,7 @@ def make(csv_path: Path, out_png: Path, out_svg: Path) -> None:
         return pre_rate, post_rate
 
     p01_pre, p01_post = split(df, "n_p01", "k_p01", 2017)
-    p03_pre, p03_post = split(df, "n_p03", "k_p03", 2008)
+    p03_pre, p03_post = split(df, "n_p03", "k_p03", 2009)
 
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(7.0, 3.0), constrained_layout=True)
     _panel(
@@ -98,11 +105,12 @@ def make(csv_path: Path, out_png: Path, out_svg: Path) -> None:
         df["n_p03"].to_numpy(),
         df["k_p03"].to_numpy(),
         df["rate_p03"].to_numpy(),
-        mandate_year=2008,
-        mandate_label="WHO 2008",
-        ann_text=f"Pre-2008: {p03_pre*100:.1f}%\nPost-2008: {p03_post*100:.1f}%",
+        mandate_year=2009,
+        mandate_label="WHO 2009",
+        ann_text=f"Pre-2009: {p03_pre*100:.1f}%\nPost-2009: {p03_post*100:.1f}%",
         y_max=10.0,
         title="WHO PCR-correction declaration (P03)",
+        ann_xy=(2014.5, 0.85),
     )
     out_png.parent.mkdir(parents=True, exist_ok=True)
     out_svg.parent.mkdir(parents=True, exist_ok=True)
