@@ -1,6 +1,6 @@
 [project]
 name = "malaria-ct-recon"
-version = "0.1.2"
+version = "0.1.5"
 description = "10-pilot reconnaissance of bias sources in malaria CT.gov data"
 requires-python = ">=3.11"
 license = {text = "MIT"}

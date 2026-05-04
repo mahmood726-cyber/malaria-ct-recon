@@ -72,3 +72,56 @@ def test_figure_d_empty_csv_raises(tmp_path: Path):
     out_svg = tmp_path / "x.svg"
     with pytest.raises(ValueError, match="No rows in year range"):
         mfd.make(csv, out_png, out_svg)
+
+
+def test_figure_d_dashboard_in_sync_with_figures():
+    """v0.1.5 P0-A: dashboard/figure-d.{png,svg} must be byte-identical to figures/.
+
+    GitHub Pages publishes dashboard/, so any drift between figures/ and
+    dashboard/ leaks v0.1.3-era numbers to the public site. Caught a real
+    drift in the v0.1.4 review.
+    """
+    import hashlib
+    repo = Path(__file__).parent.parent
+    pairs = [
+        (repo / "figures" / "figure-d.png", repo / "dashboard" / "figure-d.png"),
+        (repo / "figures" / "figure-d.svg", repo / "dashboard" / "figure-d.svg"),
+    ]
+    for src, dst in pairs:
+        if not src.exists():
+            pytest.skip(f"{src} not present (fresh clone before run); skipping")
+        assert dst.exists(), f"{dst} missing — run `python -m paper.make_figure_d`"
+        src_md5 = hashlib.md5(src.read_bytes()).hexdigest()
+        dst_md5 = hashlib.md5(dst.read_bytes()).hexdigest()
+        assert src_md5 == dst_md5, (
+            f"{dst.name} drift: {src} != {dst}; "
+            "re-run `python -m paper.make_figure_d` (which auto-syncs)."
+        )
+
+
+def test_figure_d_svg_has_a11y_title_desc(tmp_path: Path):
+    """v0.1.5 P0-A regression: WCAG SC 1.1.1 — SVG must have <title> + <desc>."""
+    csv = _fake_traj_csv(tmp_path)
+    out_png = tmp_path / "figure-d.png"
+    out_svg = tmp_path / "figure-d.svg"
+    mfd.make(csv, out_png, out_svg)
+    svg = out_svg.read_text(encoding="utf-8")
+    # Title must appear once at top level; desc must appear once.
+    assert svg.count("<title>") >= 1
+    assert "<desc>" in svg
+    # Descriptive text must mention both panels (FDAAA + WHO).
+    assert "FDAAA" in svg
+    assert "WHO 2009" in svg
+
+
+def test_figure_d_svg_a11y_idempotent(tmp_path: Path):
+    """v0.1.5 P0-A: re-running make() must not duplicate <title>/<desc>."""
+    csv = _fake_traj_csv(tmp_path)
+    out_png = tmp_path / "figure-d.png"
+    out_svg = tmp_path / "figure-d.svg"
+    mfd.make(csv, out_png, out_svg)
+    n_title_first = out_svg.read_text(encoding="utf-8").count("<title>")
+    # Manually re-run the inject step (idempotency contract).
+    mfd._inject_svg_a11y(out_svg, title="Different title", desc="Different desc")
+    n_title_second = out_svg.read_text(encoding="utf-8").count("<title>")
+    assert n_title_first == n_title_second, "a11y inject not idempotent"

@@ -54,7 +54,7 @@ AACT 2026-04-12 corpus = ~2,277 malaria trials (intentionally broad WHO-antimala
 |---|---|---|---|---|
 | P01 | Reporting compliance | 7.6% [6.3%, 9.1%] | 1,420 | 4/5 |
 | P02 | Endpoint-family chaos | 28.5% [25.8%, 31.4%] | 997 | 5/5 |
-| P03 | PCR-corrected reporting | 2.8% [2.0%, 3.9%] | 1,276 | 5/5 |
+| P03 | PCR-corrected reporting | 2.8% [2.0%, 3.8%] strict / 7.5% [6.2%, 9.1%] broad | 1,270 | 5/5 |
 | P04 | Resistance-era pooling | 19.1% [14.8%, 24.4%] | 256 cells | 5/5 |
 | P05 | Pediatric dose fragmentation | 17.0 doses/cell [9.18, 26.28] | 22 cells | 3/5 |
 | P06 | Cross-registry coverage (probe) | — | 24/2,277 | 2/5 |

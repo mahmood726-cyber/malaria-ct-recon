@@ -161,12 +161,29 @@ def _xml_escape(s: str) -> str:
              .replace(">", "&gt;").replace('"', "&quot;"))
 
 
+def _sync_to_dashboard(png: Path, svg: Path) -> None:
+    """v0.1.5 P0-A: keep dashboard/ figure copies byte-identical to figures/.
+
+    GitHub Pages publishes ``dashboard/`` so the public site renders the
+    dashboard copy, not ``figures/``. Drift between the two is the failure
+    mode the v0.1.4→v0.1.5 review caught (dashboard had v0.1.3-era 8.0%/2.4%
+    while figures/ had v0.1.4 8.1%/2.3%).
+    """
+    import shutil
+    dash = Path("dashboard")
+    if not dash.is_dir():
+        return
+    shutil.copyfile(png, dash / png.name)
+    shutil.copyfile(svg, dash / svg.name)
+
+
 def main() -> int:
     csv = Path("pilots/results/year_trajectories.csv")
     out_png = Path("figures/figure-d.png")
     out_svg = Path("figures/figure-d.svg")
     make(csv, out_png, out_svg)
-    print(f"figure-d OK: {out_png}, {out_svg}")
+    _sync_to_dashboard(out_png, out_svg)
+    print(f"figure-d OK: {out_png}, {out_svg} (synced to dashboard/)")
     return 0
 
 

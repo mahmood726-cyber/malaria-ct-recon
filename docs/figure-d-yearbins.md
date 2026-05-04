@@ -67,8 +67,10 @@ Pre-2017 / post-2017 split: 4.3% (20/461) / 1.8% (10/570) (Δ −2.6 pp).
 
 ## Headline contrast (for body)
 
-P01 (FDAAA): rose from 4.0% pre-2017 to 14.5% post — slow improvement, mandate working.
-P03 (WHO 2008 PCR-correction): fell from 6.8% pre-2008 to 2.7% post — declining despite mandate.
+P01 (FDAAA): rose from 4.0 % [2.7, 5.7] pre-2017 to 14.5 % [11.8, 17.8] post-2017 (Fisher p < 0.001) — enforcement-driven improvement.
+P03 (WHO 2009 PCR-correction): fell from 8.1 % [4.0, 15.9] pre-2009 to 2.3 % [1.6, 3.5] post-2009 (Fisher p = 0.008) — declining despite the operational guideline.
+
+(v0.1.3 amended the WHO cutoff from 2008 → 2009 because the 2008 doc is a technical genotyping monograph, not the operational protocol. v0.1.4 narrowed the P03 denominator from 1,276 → 1,270 by excluding drug+device combo trials. Both changes documented in `preregistration-history.md`.)
 
 Note: P03 year-bin denominators differ from the scratch script because this version applies the production drug-only filter (excludes vaccine trials, trials with no primary outcomes in design_outcomes) and uses the full production PCR regex (_PCR_RX). The scratch script used a narrower regex and no drug-only filter. The "decline after WHO mandate" direction is unchanged; magnitudes shift modestly.
 
@@ -86,7 +88,7 @@ Two-panel figure, side-by-side. Each panel:
 - x-axis: primary completion year, 2004–2024
 - y-axis: compliance rate (0–25% range covers both panels)
 - bars or line+ribbon for point estimate + Wilson 95% CI per year
-- vertical dashed line at mandate year (P01: 2017 FDAAA Final Rule; P03: 2008 WHO mandate)
+- vertical dashed line at mandate year (P01: 2017 FDAAA Final Rule; P03: 2009 WHO operational protocol)
 - horizontal reference at "expected ≥X%" (annotated, not modelled — both mandates target near-100%)
 
 Years with n < 10 should be visually de-emphasised (faded fill or thinner ribbon) to flag low precision.
